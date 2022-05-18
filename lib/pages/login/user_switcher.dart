@@ -34,9 +34,16 @@ class LoginUserSwitcher extends StatelessWidget {
             onPressed: () {},
             child: Row(
               children: [
-                Text(
-                  "Doctor ?",
-                  style: typography.bodyText1,
+                Icon(
+                  FlutterRemix.stethoscope_line,
+                  color: typography.bodyText1?.color,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "Doctor ?",
+                    style: typography.bodyText1,
+                  ),
                 ),
                 Icon(
                   FlutterRemix.arrow_right_s_line,

@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
 import 'package:rapid_health/global/logo_mini.dart';
 import 'package:rapid_health/pages/login/user_switcher.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
@@ -15,6 +19,8 @@ class _LoginPageState extends State<LoginPage>
   late AnimationController _controller;
   late SettingsService settings;
   bool userIsPatient = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -29,11 +35,12 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  final snackBar = const SnackBar(
+    content: Text('Error! During Login ? Are you sure you have an account.'),
+  );
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final typography =
-        settings.darkMode ? theme.typography.white : theme.typography.black;
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -53,12 +60,15 @@ class _LoginPageState extends State<LoginPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text.rich(
-                            TextSpan(text: "Your ", children: <TextSpan>[
-                              TextSpan(
-                                text: "health",
-                                style: theme.textTheme.headline3,
-                              ),
-                            ]),
+                            TextSpan(
+                              text: "Your ",
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: "health",
+                                  style: theme.textTheme.headline3,
+                                ),
+                              ],
+                            ),
                             style: theme.textTheme.headline2,
                           ),
                           Text.rich(
@@ -76,7 +86,9 @@ class _LoginPageState extends State<LoginPage>
                   ),
                   Flexible(
                     flex: 2,
-                    child: LogoMini(darkMode: settings.darkMode),
+                    child: LogoMini(
+                      darkMode: theme.brightness == Brightness.dark,
+                    ),
                   )
                 ],
               ),
@@ -86,6 +98,8 @@ class _LoginPageState extends State<LoginPage>
                   const LoginUserSwitcher(),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding:
+                        const EdgeInsets.only(bottom: 20, left: 20, right: 20),
                     height: 300,
                     decoration: BoxDecoration(
                       color: theme.primaryColor,
@@ -94,7 +108,106 @@ class _LoginPageState extends State<LoginPage>
                         topRight: Radius.circular(15),
                       ),
                     ),
-                    width: MediaQuery.of(context).size.width - 20,
+                    width: max(0, MediaQuery.of(context).size.width - 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 25.0),
+                              child: Text(
+                                "Almost there !",
+                                style: theme.textTheme.bodyText1?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            TextField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: theme.textTheme.bodyText1,
+                              onEditingComplete: () {
+                                BlocProvider.of<LoginUICubit>(context)
+                                    .setEmail(_emailController.text);
+                              },
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
+                                label: Text(
+                                  "Enter the Email here",
+                                  style: theme.textTheme.subtitle2,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              child: TextField(
+                                controller: _passwordController,
+                                keyboardType: TextInputType.visiblePassword,
+                                obscureText: true,
+                                style: theme.textTheme.bodyText1,
+                                onEditingComplete: () {
+                                  context
+                                      .read<LoginUICubit>()
+                                      .setPassword(_passwordController.text);
+                                },
+                                maxLines: 1,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  label: Text(
+                                    "Enter the Password here",
+                                    style: theme.textTheme.subtitle2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "New here? Register your account",
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.subtitle2?.copyWith(
+                                  color: Colors.lightBlue.shade200,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                Colors.blueGrey.shade200,
+                              )),
+                              onPressed: () async {
+                                BlocProvider.of<LoginUICubit>(context)
+                                    .setEmail(_emailController.text);
+                                context
+                                    .read<LoginUICubit>()
+                                    .setPassword(_passwordController.text);
+                                final result = await context
+                                    .read<LoginUICubit>()
+                                    .loginPatient();
+                                if (result) {
+                                  Navigator.pushReplacementNamed(
+                                      context, "home");
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
+                              },
+                              child: const Text("Login"),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   )
                 ],
               )

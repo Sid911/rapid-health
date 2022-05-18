@@ -28,11 +28,32 @@ class Themes {
   final ThemeData lightTheme = ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: const Color(0xFFF8F8F8),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            const Color(0xFFE3E3E3),
+          ),
+          elevation: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.pressed)) {
+              return 15;
+            }
+            if (states.contains(MaterialState.hovered) ||
+                states.contains(MaterialState.selected)) {
+              return 12;
+            }
+            return 0;
+          }),
+        ),
+      ),
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.all(
           const Color(0xFFC4E3E5),
         ),
         trackColor: MaterialStateProperty.all(const Color(0xFF7BA0A8)),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFFF8F8F8),
+        elevation: 0,
       ),
       // Text theme for light mode
       textTheme: const TextTheme(
@@ -44,7 +65,7 @@ class Themes {
         headline3: TextStyle(
           color: Color(0xFF6A7484),
           fontFamily: "Lato",
-          fontSize: 28,
+          fontSize: 26,
         ),
         headline4: TextStyle(
             color: Color(0xFF393E46),
@@ -58,7 +79,7 @@ class Themes {
         bodyText2: TextStyle(
             color: Color(0xFF393E46), fontFamily: "Lato", fontSize: 12),
         subtitle2: TextStyle(
-            color: Color(0xFF393E46), fontFamily: "Lato", fontSize: 11),
+            color: Color(0xFF393E46), fontFamily: "Lato", fontSize: 12),
       ),
       primarySwatch: const MaterialColor(
         0xFFE6E6E6,
@@ -109,13 +130,13 @@ class Themes {
         color: Color(0xFFE6E6E6),
         fontFamily: "Lato",
         fontWeight: FontWeight.bold,
-        fontSize: 40,
+        fontSize: 38,
       ),
       headline3: TextStyle(
         color: Color(0xFFC9C9C9),
         fontFamily: "Lato",
         fontWeight: FontWeight.w100,
-        fontSize: 28,
+        fontSize: 26,
       ),
       headline4: TextStyle(
         color: Color(0xFFE6E6E6),
@@ -126,11 +147,11 @@ class Themes {
       bodyText1:
           TextStyle(color: Color(0xFFE6E6E6), fontFamily: "Lato", fontSize: 16),
       subtitle1:
-          TextStyle(color: Color(0xFFE6E6E6), fontFamily: "Lato", fontSize: 20),
+          TextStyle(color: Color(0xFFC9C9C9), fontFamily: "Lato", fontSize: 20),
       bodyText2:
           TextStyle(color: Color(0xFFE6E6E6), fontFamily: "Lato", fontSize: 12),
       subtitle2:
-          TextStyle(color: Color(0xFFE6E6E6), fontFamily: "Lato", fontSize: 11),
+          TextStyle(color: Color(0xFFC9C9C9), fontFamily: "Lato", fontSize: 12),
     ),
   );
 
