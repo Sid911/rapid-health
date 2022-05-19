@@ -1,21 +1,32 @@
 import 'package:hive/hive.dart';
-import 'package:rapid_health/services/loginService/auth_service.dart';
+import 'package:rapid_health/interfaces/auth_service_interface.dart';
+import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
+
+import 'doctor_categories.dart';
 
 class LocalServer {
   static final LocalServer _instance = LocalServer._private();
   static LocalServer get instance => _instance;
   static late Box<DoctorData> doctorsBox;
   static late Box<PatientData> patientBox;
+  static late Box<Chat> chatsBox;
+  static late Box<ChatData> conversationBox;
   LocalServer._private();
 
   static Future<void> init() async {
     Hive.registerAdapter(UserDataAdapter());
     Hive.registerAdapter(PatientAdapter());
     Hive.registerAdapter(DoctorAdapter());
+    Hive.registerAdapter(DoctorCategoriesAdapter());
+    Hive.registerAdapter(ChatAdapter());
+    Hive.registerAdapter(ChatDataAdapter());
+    Hive.registerAdapter(ChatPreviewAdapter());
     doctorsBox = await Hive.openBox<DoctorData>("doctors");
     patientBox = await Hive.openBox<PatientData>("patients");
-
+    chatsBox = await Hive.openBox<Chat>("chats");
+    conversationBox = await Hive.openBox<ChatData>("conversations");
+    // generate Dummy Data
     final sid = PatientData(
       name: 'Siddharth Sinha',
       password: "1a2b3c4d5e",
@@ -36,6 +47,21 @@ class LocalServer {
       final PatientData patient = patientBox.get(key)!;
       if (patient.password == password) {
         patientBox.put(key, patient.copyWith(lastLoggedIn: DateTime.now()));
+        return LoginError.success;
+      } else {
+        return LoginError.incorrectCredential;
+      }
+    } else {
+      return LoginError.notFound;
+    }
+  }
+
+  static LoginError loginDoctor(String key, String password) {
+    final containsUser = doctorsBox.containsKey(key);
+    if (containsUser) {
+      final DoctorData doctor = doctorsBox.get(key)!;
+      if (doctor.password == password) {
+        doctorsBox.put(key, doctor.copyWith(lastLoggedIn: DateTime.now()));
         return LoginError.success;
       } else {
         return LoginError.incorrectCredential;

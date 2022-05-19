@@ -1,24 +1,30 @@
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/utility/local_server.dart';
 
-import './auth_service.dart';
+import '../../interfaces/auth_service_interface.dart';
 
-/// [LocalAuthService] is a mock [AuthService] implementation which stores data locally about the users.
+/// [LocalAuthService] is a mock [AuthServiceInterface] implementation which stores data locally about the users.
 /// Using hive as its key pair database
 ///
 ///
-class LocalAuthService extends AuthService {
+class LocalAuthService extends AuthServiceInterface {
   bool? _isDoc;
   bool _auth = false;
   @override
-  Future<LoginError> loginDoctorWithEmailPassword(
-      {required String email, required String password}) {
-    // TODO: implement loginDoctorWithEmailPassword
-    throw UnimplementedError();
+  Future<LoginError> loginDoctorWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    final result = LocalServer.loginDoctor(email, password);
+    if (result == LoginError.success) {
+      _auth = true;
+    }
+    ;
+    return result;
   }
 
   @override
-  Future<LoginError> loginUserWithEmailPassword({
+  Future<LoginError> loginPatientWithEmailPassword({
     required String email,
     required String password,
   }) async {
@@ -29,19 +35,19 @@ class LocalAuthService extends AuthService {
 
   @override
   void logout() {
-    // TODO: implement logout
+    _auth = false;
   }
 
   @override
-  Future<LoginError> registerDoctor(DoctorData data) {
-    // TODO: implement registerDoctor
-    throw UnimplementedError();
+  Future<LoginError> registerDoctor(DoctorData data) async {
+    LocalServer.doctorsBox.put(data.email, data);
+    return LoginError.success;
   }
 
   @override
-  Future<LoginError> registerUserWithEmailPassword(UserData data) {
-    // TODO: implement registerUserWithEmailPassword
-    throw UnimplementedError();
+  Future<LoginError> registerPatient(PatientData data) async {
+    LocalServer.patientBox.put(data.email, data);
+    return LoginError.success;
   }
 
   @override

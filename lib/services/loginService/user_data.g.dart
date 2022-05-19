@@ -132,15 +132,16 @@ class DoctorAdapter extends TypeAdapter<DoctorData> {
       phone: fields[3] as String,
       workAddress: fields[6] as String,
       workPhone: fields[7] as String,
-      coordinates: (fields[8] as List).cast<int>(),
+      coordinates: (fields[8] as List).cast<double>(),
       website: fields[9] as String,
+      category: fields[10] as DoctorCategory,
     );
   }
 
   @override
   void write(BinaryWriter writer, DoctorData obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(6)
       ..write(obj.workAddress)
       ..writeByte(7)
@@ -149,6 +150,8 @@ class DoctorAdapter extends TypeAdapter<DoctorData> {
       ..write(obj.coordinates)
       ..writeByte(9)
       ..write(obj.website)
+      ..writeByte(10)
+      ..write(obj.category)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)

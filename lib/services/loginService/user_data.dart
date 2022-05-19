@@ -1,4 +1,5 @@
 import 'package:hive_flutter/adapters.dart';
+import 'package:rapid_health/utility/doctor_categories.dart';
 
 part 'user_data.g.dart';
 
@@ -115,6 +116,7 @@ class DoctorData extends UserData {
     required this.workPhone,
     required this.coordinates,
     required this.website,
+    required this.category,
   });
   DoctorData.fromUserData({
     required UserData data,
@@ -122,6 +124,7 @@ class DoctorData extends UserData {
     required this.workPhone,
     required this.coordinates,
     required this.website,
+    required this.category,
   }) : super(
           name: data.name,
           password: data.password,
@@ -135,11 +138,41 @@ class DoctorData extends UserData {
   @HiveField(7)
   final String workPhone;
   @HiveField(8)
-  final List<int> coordinates;
+  final List<double> coordinates;
   @HiveField(9)
   final String website;
+  @HiveField(10)
+  final DoctorCategory category;
 
   @override
   // Simple doctor addon for uid
   String get uid => "doctor:" + email;
+
+  DoctorData copyWith({
+    String? name,
+    String? password,
+    String? email,
+    DateTime? accountCreationDate,
+    DateTime? lastLoggedIn,
+    String? phone,
+    String? workAddress,
+    String? workPhone,
+    List<double>? coordinates,
+    String? website,
+    DoctorCategory? category,
+  }) {
+    return DoctorData(
+      name: name ?? this.name,
+      password: password ?? this.password,
+      email: email ?? this.email,
+      accountCreationDate: accountCreationDate ?? this.accountCreationDate,
+      lastLoggedIn: lastLoggedIn ?? this.lastLoggedIn,
+      phone: phone ?? this.phone,
+      workAddress: workAddress ?? this.workAddress,
+      workPhone: workPhone ?? this.workPhone,
+      coordinates: coordinates ?? this.coordinates,
+      website: website ?? this.website,
+      category: category ?? this.category,
+    );
+  }
 }

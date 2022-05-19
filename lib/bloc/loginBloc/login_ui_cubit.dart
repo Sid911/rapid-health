@@ -1,28 +1,31 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_state.dart';
-import 'package:rapid_health/services/loginService/auth_service.dart';
+import 'package:rapid_health/interfaces/auth_service_interface.dart';
 
-import '../../services/loginService/auth_service.dart';
+import '../../interfaces/auth_service_interface.dart';
 
 class LoginUICubit extends Cubit<LoginUIState> {
   LoginUICubit({required this.authService})
       : super(const LoginUITransition("", "", false, true));
-  AuthService authService;
+  AuthServiceInterface authService;
 
   @override
   void onChange(Change<LoginUIState> change) {
     super.onChange(change);
-    print("Current State : \n\n"
-        "Email : ${change.currentState.email}\n"
-        "Password : ${change.currentState.password}\n"
-        "User is doctor : ${change.currentState.userIsDoctor}\n"
-        "Is animating : ${change.currentState.isAnimating}");
+    if (kDebugMode) {
+      print("Current State : \n\n"
+          "Email : ${change.currentState.email}\n"
+          "Password : ${change.currentState.password}\n"
+          "User is doctor : ${change.currentState.userIsDoctor}\n"
+          "Is animating : ${change.currentState.isAnimating}");
 
-    print("Next State : \n\n"
-        "Email : ${change.currentState.email}\n"
-        "Password : ${change.currentState.password}\n"
-        "User is doctor : ${change.currentState.userIsDoctor}\n"
-        "Is animating : ${change.currentState.isAnimating}");
+      print("Next State : \n\n"
+          "Email : ${change.currentState.email}\n"
+          "Password : ${change.currentState.password}\n"
+          "User is doctor : ${change.currentState.userIsDoctor}\n"
+          "Is animating : ${change.currentState.isAnimating}");
+    }
   }
 
   void transitionStart() {
@@ -66,7 +69,7 @@ class LoginUICubit extends Cubit<LoginUIState> {
   }
 
   Future<bool> loginPatient() async {
-    final result = await authService.loginUserWithEmailPassword(
+    final result = await authService.loginPatientWithEmailPassword(
       email: state.email,
       password: state.password,
     );
@@ -76,5 +79,24 @@ class LoginUICubit extends Cubit<LoginUIState> {
     }
 
     return false;
+  }
+
+  Future<bool> loginDoctor() async {
+    final result = await authService.loginDoctorWithEmailPassword(
+        email: state.email, password: state.password);
+    if (result == LoginError.success) {
+      return true;
+    }
+
+    return false;
+  }
+
+  void toggleUserIsDoctor() {
+    emit(LoginUILoaded(
+      state.email,
+      state.password,
+      !state.userIsDoctor,
+      state.isAnimating,
+    ));
   }
 }

@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
 import 'package:rapid_health/pages/homepage/patient_homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
+import 'package:rapid_health/pages/registration/registration_page.dart';
 import 'package:rapid_health/pages/setup/setup_page.dart';
 import 'package:rapid_health/services/loginService/local_auth_service_impl.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
                   child: LoginPage(settingsService: settings),
                 ),
             "setup": (ctx) => SetupPage(settingsService: settings),
+            "register": (ctx) => const RegistrationPage(),
           },
           initialRoute: "login",
         );

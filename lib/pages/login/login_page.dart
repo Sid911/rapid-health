@@ -1,11 +1,14 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
+import 'package:rapid_health/bloc/loginBloc/login_ui_state.dart';
 import 'package:rapid_health/global/logo_mini.dart';
 import 'package:rapid_health/pages/login/user_switcher.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
+import 'package:rapid_health/utility/streamable_text_model.dart';
+
+import 'login_card.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.settingsService}) : super(key: key);
@@ -18,15 +21,32 @@ class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late SettingsService settings;
-  bool userIsPatient = true;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late Animation<double> translateAnimation;
+  late Animation<double> opacityAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
     settings = widget.settingsService;
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+
+    translateAnimation = Tween<double>(begin: 250, end: 0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.bounceOut,
+      ),
+    );
+    opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.bounceOut,
+      ),
+    );
+    _controller.forward().orCancel;
   }
 
   @override
@@ -45,173 +65,109 @@ class _LoginPageState extends State<LoginPage>
       body: SafeArea(
         child: Container(
           margin: const EdgeInsets.only(top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    flex: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text.rich(
-                            TextSpan(
-                              text: "Your ",
-                              children: <TextSpan>[
+          child: SingleChildScrollView(
+            primary: true,
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: opacityAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text.rich(
                                 TextSpan(
-                                  text: "health",
-                                  style: theme.textTheme.headline3,
+                                  text: "Your ",
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: "health",
+                                      style: theme.textTheme.headline3,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            style: theme.textTheme.headline2,
-                          ),
-                          Text.rich(
-                            TextSpan(text: "Closer to ", children: <TextSpan>[
-                              TextSpan(
-                                text: "You",
                                 style: theme.textTheme.headline2,
                               ),
-                            ]),
-                            style: theme.textTheme.headline3,
+                              Text.rich(
+                                TextSpan(
+                                    text: "Closer to ",
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: "You",
+                                        style: theme.textTheme.headline2,
+                                      ),
+                                    ]),
+                                style: theme.textTheme.headline3,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: LogoMini(
-                      darkMode: theme.brightness == Brightness.dark,
-                    ),
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const LoginUserSwitcher(),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    padding:
-                        const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-                    height: 300,
-                    decoration: BoxDecoration(
-                      color: theme.primaryColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                      ),
-                    ),
-                    width: max(0, MediaQuery.of(context).size.width - 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 25.0),
-                              child: Text(
-                                "Almost there !",
-                                style: theme.textTheme.bodyText1?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            TextField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              style: theme.textTheme.bodyText1,
-                              onEditingComplete: () {
-                                BlocProvider.of<LoginUICubit>(context)
-                                    .setEmail(_emailController.text);
-                              },
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                label: Text(
-                                  "Enter the Email here",
-                                  style: theme.textTheme.subtitle2,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              child: TextField(
-                                controller: _passwordController,
-                                keyboardType: TextInputType.visiblePassword,
-                                obscureText: true,
-                                style: theme.textTheme.bodyText1,
-                                onEditingComplete: () {
-                                  context
-                                      .read<LoginUICubit>()
-                                      .setPassword(_passwordController.text);
-                                },
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  label: Text(
-                                    "Enter the Password here",
-                                    style: theme.textTheme.subtitle2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                "New here? Register your account",
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.subtitle2?.copyWith(
-                                  color: Colors.lightBlue.shade200,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                Colors.blueGrey.shade200,
-                              )),
-                              onPressed: () async {
-                                BlocProvider.of<LoginUICubit>(context)
-                                    .setEmail(_emailController.text);
-                                context
-                                    .read<LoginUICubit>()
-                                    .setPassword(_passwordController.text);
-                                final result = await context
-                                    .read<LoginUICubit>()
-                                    .loginPatient();
-                                if (result) {
-                                  Navigator.pushReplacementNamed(
-                                      context, "home");
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                              },
-                              child: const Text("Login"),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              )
-            ],
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: LogoMini(
+                          darkMode: theme.brightness == Brightness.dark,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Container(
+                      transform: Matrix4.translationValues(
+                        0,
+                        translateAnimation.value,
+                        0,
+                      ),
+                      child: child,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlocBuilder<LoginUICubit, LoginUIState>(
+                        builder: (context, state) {
+                          final loginModel = state.userIsDoctor
+                              ? StreamableTextModel(" Doctor !")
+                              : StreamableTextModel(" Patient !");
+                          final buttonModel = state.userIsDoctor
+                              ? StreamableTextModel("Patient ?")
+                              : StreamableTextModel("Doctor ?");
+                          final buttonIcon = state.userIsDoctor
+                              ? FlutterRemix.empathize_line
+                              : FlutterRemix.stethoscope_line;
+                          return LoginUserSwitcher(
+                            loginAsModel: loginModel,
+                            buttonModel: buttonModel,
+                            iconData: buttonIcon,
+                          );
+                        },
+                      ),
+                      LoginCard(
+                        emailController: _emailController,
+                        passwordController: _passwordController,
+                        snackBar: snackBar,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
