@@ -26,6 +26,8 @@ dependencies:
   flutter_remix: ^0.0.3
   equatable: ^2.0.3
   permission_handler: ^9.2.0
+  flutter_glow: ^0.2.0
+  logger: ^1.1.0
 
 dev_dependencies:
   flutter_test:

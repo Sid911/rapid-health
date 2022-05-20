@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -23,7 +25,7 @@ class LoginUserSwitcher extends StatelessWidget {
         : theme.typography.black;
     final size = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: size.height - 550),
+      margin: EdgeInsets.only(top: max(0, size.height - 550)),
       padding: const EdgeInsets.symmetric(
         horizontal: 15,
         vertical: 10,

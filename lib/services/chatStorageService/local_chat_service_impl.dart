@@ -3,7 +3,7 @@ import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 
 ///
 ///
-class LocalChatService extends ChatService {
+class LocalChatService extends ChatServiceInterface {
   @override
   List<ChatPreview> getChatPreviews() {
     // TODO: implement getChatPreviews

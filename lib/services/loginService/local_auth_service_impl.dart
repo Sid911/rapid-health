@@ -1,5 +1,7 @@
+import 'package:logger/logger.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/utility/local_server.dart';
+import 'package:rapid_health/utility/user.dart';
 
 import '../../interfaces/auth_service_interface.dart';
 
@@ -10,6 +12,9 @@ import '../../interfaces/auth_service_interface.dart';
 class LocalAuthService extends AuthServiceInterface {
   bool? _isDoc;
   bool _auth = false;
+  User? _currentUser;
+
+  final Logger _logger = Logger();
   @override
   Future<LoginError> loginDoctorWithEmailPassword({
     required String email,
@@ -18,8 +23,9 @@ class LocalAuthService extends AuthServiceInterface {
     final result = LocalServer.loginDoctor(email, password);
     if (result == LoginError.success) {
       _auth = true;
+      final user = LocalServer.getDoctorData(email)!;
+      _currentUser = User(userData: user, isUserDoctor: true);
     }
-    ;
     return result;
   }
 
@@ -29,13 +35,18 @@ class LocalAuthService extends AuthServiceInterface {
     required String password,
   }) async {
     final result = LocalServer.loginPatient(email, password);
-    if (result == LoginError.success) _auth = true;
+    if (result == LoginError.success) {
+      _auth = true;
+      final user = LocalServer.getPatientData(email)!;
+      _currentUser = User(userData: user, isUserDoctor: false);
+    }
     return result;
   }
 
   @override
   void logout() {
     _auth = false;
+    _currentUser = null;
   }
 
   @override
@@ -55,4 +66,7 @@ class LocalAuthService extends AuthServiceInterface {
 
   @override
   bool get isAuthenticated => _auth;
+
+  @override
+  User? get currentUser => _currentUser;
 }

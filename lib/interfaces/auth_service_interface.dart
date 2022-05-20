@@ -1,4 +1,5 @@
 import 'package:rapid_health/services/loginService/user_data.dart';
+import 'package:rapid_health/utility/user.dart';
 
 /// Abstract class used as an interface for different login service implementations
 abstract class AuthServiceInterface {
@@ -8,6 +9,8 @@ abstract class AuthServiceInterface {
 
   /// Returns true if user is authenticated
   bool get isAuthenticated;
+
+  User? get currentUser;
 
   /// Login Patient using email and password
   ///

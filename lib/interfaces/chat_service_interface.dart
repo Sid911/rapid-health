@@ -1,7 +1,7 @@
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 
 /// Todo: Docs
-abstract class ChatService {
+abstract class ChatServiceInterface {
   ///
   List<ChatPreview> getChatPreviews();
 

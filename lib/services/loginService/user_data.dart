@@ -3,7 +3,9 @@ import 'package:rapid_health/utility/doctor_categories.dart';
 
 part 'user_data.g.dart';
 
-/// Base UserData Class contains basic information about the user
+/// Base UserData Class contains basic information about the user.
+/// This couldn't be a abstract class in this case because of Hive's way of implementing
+/// inheritance.
 @HiveType(
   typeId: 0,
   adapterName: "UserDataAdapter",

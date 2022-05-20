@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 
 import '../../bloc/loginBloc/login_ui_cubit.dart';
 
@@ -50,9 +51,9 @@ class LoginCard extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       width: max(0, MediaQuery.of(context).size.width - 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,40 +108,44 @@ class LoginCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "register");
-                },
-                child: Text(
-                  "New here? Register your account",
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.subtitle2?.copyWith(
-                    color: theme.brightness == Brightness.dark
-                        ? Colors.lightBlue.shade200
-                        : Colors.blueGrey.shade700,
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "register");
+                  },
+                  child: Text(
+                    "New here? Register your account",
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.subtitle2?.copyWith(
+                      color: theme.brightness == Brightness.dark
+                          ? Colors.lightBlue.shade200
+                          : Colors.blueGrey.shade700,
+                    ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                  Colors.blueGrey.shade200,
-                )),
-                onPressed: () {
-                  _handleLogin(context).then((value) {
-                    if (value) {
-                      Navigator.pushReplacementNamed(context, "home");
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  });
-                },
-                child: const Text("Login"),
-              )
-            ],
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.black)),
+                  onPressed: () {
+                    _handleLogin(context).then((value) {
+                      if (value) {
+                        Navigator.pushReplacementNamed(context, "home");
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    });
+                  },
+                  child: const Icon(
+                    FlutterRemix.arrow_right_s_line,
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),
