@@ -34,6 +34,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               ),
             ),
             TextFormField(
+              keyboardType: TextInputType.name,
               decoration: const InputDecoration(
                 labelText: "Full Name",
                 labelStyle: TextStyle(fontSize: 12),
@@ -46,6 +47,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: "Email",
                 labelStyle: TextStyle(fontSize: 12),
@@ -58,6 +60,8 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
               decoration: const InputDecoration(
                 labelText: "Password",
                 labelStyle: TextStyle(fontSize: 12),
@@ -70,6 +74,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 labelText: "Phone no.",
                 labelStyle: TextStyle(fontSize: 12),
@@ -82,6 +87,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 labelText: "Work phone no. (public)",
                 labelStyle: TextStyle(fontSize: 12),
@@ -94,6 +100,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.streetAddress,
               maxLines: 2,
               decoration: const InputDecoration(
                 labelText: "Work address (public)",
@@ -107,6 +114,7 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               },
             ),
             TextFormField(
+              keyboardType: TextInputType.streetAddress,
               maxLines: 2,
               decoration: const InputDecoration(
                 labelText: "Website",

@@ -6,7 +6,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 
 import '../../bloc/loginBloc/login_ui_cubit.dart';
 
-class LoginCard extends StatelessWidget {
+class LoginCard extends StatefulWidget {
   const LoginCard({
     Key? key,
     required TextEditingController emailController,
@@ -20,11 +20,17 @@ class LoginCard extends StatelessWidget {
   final TextEditingController _passwordController;
   final SnackBar snackBar;
 
+  @override
+  State<LoginCard> createState() => _LoginCardState();
+}
+
+class _LoginCardState extends State<LoginCard> {
+  final _formKey = GlobalKey<FormState>();
   Future<bool> _handleLogin(BuildContext context) async {
     {
       final cubit = context.read<LoginUICubit>();
-      cubit.setEmail(_emailController.text);
-      cubit.setPassword(_passwordController.text);
+      cubit.setEmail(widget._emailController.text);
+      cubit.setPassword(widget._passwordController.text);
       if (cubit.state.userIsDoctor) {
         return await cubit.loginDoctor();
       } else {
@@ -67,43 +73,50 @@ class LoginCard extends StatelessWidget {
                   ),
                 ),
               ),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: theme.textTheme.bodyText1,
-                onEditingComplete: () {
-                  BlocProvider.of<LoginUICubit>(context)
-                      .setEmail(_emailController.text);
-                },
-                maxLines: 1,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  label: Text(
-                    "Enter the Email here",
-                    style: theme.textTheme.subtitle2,
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: TextField(
-                  controller: _passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  style: theme.textTheme.bodyText1,
-                  onEditingComplete: () {
-                    context
-                        .read<LoginUICubit>()
-                        .setPassword(_passwordController.text);
-                  },
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    label: Text(
-                      "Enter the Password here",
-                      style: theme.textTheme.subtitle2,
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: widget._emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      style: theme.textTheme.bodyText1,
+                      onEditingComplete: () {
+                        BlocProvider.of<LoginUICubit>(context)
+                            .setEmail(widget._emailController.text);
+                      },
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        label: Text(
+                          "Enter the Email here",
+                          style: theme.textTheme.subtitle2,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20),
+                      child: TextFormField(
+                        controller: widget._passwordController,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        style: theme.textTheme.bodyText1,
+                        onEditingComplete: () {
+                          context
+                              .read<LoginUICubit>()
+                              .setPassword(widget._passwordController.text);
+                        },
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          label: Text(
+                            "Enter the Password here",
+                            style: theme.textTheme.subtitle2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -135,7 +148,8 @@ class LoginCard extends StatelessWidget {
                       if (value) {
                         Navigator.pushReplacementNamed(context, "home");
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(widget.snackBar);
                       }
                     });
                   },

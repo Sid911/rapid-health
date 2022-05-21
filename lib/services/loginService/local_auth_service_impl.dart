@@ -51,7 +51,11 @@ class LocalAuthService extends AuthServiceInterface {
 
   @override
   Future<LoginError> registerDoctor(DoctorData data) async {
-    LocalServer.doctorsBox.put(data.email, data);
+    if (!LocalServer.doctorsBox.containsKey(data.email)) {
+      LocalServer.doctorsBox.put(data.email, data);
+    } else {
+      return LoginError.incorrectCredential;
+    }
     return LoginError.success;
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
+import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/pages/homepage/patient_homepage.dart';
@@ -62,7 +63,10 @@ class _MyAppState extends State<MyApp> {
                     child: LoginPage(settingsService: settings),
                   ),
               "setup": (ctx) => SetupPage(settingsService: settings),
-              "register": (ctx) => const RegistrationPage(),
+              "register": (ctx) => BlocProvider(
+                    create: (context) => RegistrationCubit(),
+                    child: const RegistrationPage(),
+                  ),
             },
             initialRoute: "login",
           ),

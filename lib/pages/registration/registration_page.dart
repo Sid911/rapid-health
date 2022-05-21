@@ -14,11 +14,31 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> marginAnimation;
   bool isDoctor = false;
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+        vsync: this,
+        duration: const Duration(
+          milliseconds: 1000,
+        ));
+
+    marginAnimation = Tween<double>(begin: 400, end: 200).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInExpo,
+      ),
+    );
+  }
+
+  void _startAnimation() {
+    _controller.forward().orCancel;
+  }
+
+  void _reverseAnimation() {
+    _controller.reverse().orCancel;
   }
 
   @override
@@ -30,48 +50,54 @@ class _RegistrationPageState extends State<RegistrationPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      bottomSheet: BottomSheet(
-        enableDrag: false,
-        constraints: BoxConstraints(
-          maxHeight:
-              MediaQuery.of(context).size.height - (isDoctor ? 200 : 400),
-        ),
-        onClosing: () {},
-        backgroundColor: theme.scaffoldBackgroundColor,
-        builder: (context) {
-          return Stack(
-            alignment: Alignment.topRight,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: isDoctor
-                    ? const DoctorRegistration()
-                    : const PatientRegistration(),
-              ),
-              OutlinedButton(
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.resolveWith((states) {
-                    if (states.contains(MaterialState.hovered)) {
-                      return 10;
-                    } else if (states.contains(MaterialState.pressed)) {
-                      return 5;
-                    }
-                    return 15;
-                  }),
-                  backgroundColor:
-                      MaterialStateProperty.all(theme.primaryColor),
-                ),
-                onPressed: () {},
-                child: GlowIcon(
-                  FlutterRemix.arrow_right_s_line,
-                  glowColor: Colors.lightBlueAccent,
-                  color: theme.textTheme.headline4?.color,
-                ),
-              ),
-            ],
+      bottomSheet: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final newheight = height - marginAnimation.value;
+          return BottomSheet(
+            enableDrag: false,
+            constraints: BoxConstraints(
+              maxHeight: newheight,
+            ),
+            onClosing: () {},
+            backgroundColor: theme.scaffoldBackgroundColor,
+            builder: (context) {
+              return child!;
+            },
           );
         },
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: isDoctor
+                  ? const DoctorRegistration()
+                  : const PatientRegistration(),
+            ),
+            OutlinedButton(
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.hovered)) {
+                    return 10;
+                  } else if (states.contains(MaterialState.pressed)) {
+                    return 5;
+                  }
+                  return 15;
+                }),
+                backgroundColor: MaterialStateProperty.all(theme.primaryColor),
+              ),
+              onPressed: () {},
+              child: GlowIcon(
+                FlutterRemix.arrow_right_s_line,
+                glowColor: Colors.lightBlueAccent,
+                color: theme.textTheme.headline4?.color,
+              ),
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -97,10 +123,16 @@ class _RegistrationPageState extends State<RegistrationPage>
               margin: const EdgeInsets.only(top: 50),
               child: SwitchListTile(
                 value: isDoctor,
-                onChanged: (value) {
+                onChanged: (value) async {
                   setState(() {
                     isDoctor = value;
                   });
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  if (value) {
+                    _startAnimation();
+                  } else {
+                    _reverseAnimation();
+                  }
                 },
                 title: Text(
                   "Are you a doctor ?",
