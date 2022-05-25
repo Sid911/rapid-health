@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:rapid_health/pages/registration/registration_doctor.dart';
-import 'package:rapid_health/pages/registration/registration_patient.dart';
+import 'package:rapid_health/bloc/registration/registration_cubit.dart';
+import 'package:rapid_health/pages/registration/registration_card.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class _RegistrationPageState extends State<RegistrationPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> marginAnimation;
-  bool isDoctor = false;
   @override
   void initState() {
     super.initState();
@@ -25,7 +25,7 @@ class _RegistrationPageState extends State<RegistrationPage>
           milliseconds: 1000,
         ));
 
-    marginAnimation = Tween<double>(begin: 400, end: 200).animate(
+    marginAnimation = Tween<double>(begin: 400, end: 250).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeInExpo,
@@ -55,11 +55,11 @@ class _RegistrationPageState extends State<RegistrationPage>
       bottomSheet: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          final newheight = height - marginAnimation.value;
+          final newHeight = height - marginAnimation.value;
           return BottomSheet(
             enableDrag: false,
             constraints: BoxConstraints(
-              maxHeight: newheight,
+              maxHeight: newHeight,
             ),
             onClosing: () {},
             backgroundColor: theme.scaffoldBackgroundColor,
@@ -72,11 +72,8 @@ class _RegistrationPageState extends State<RegistrationPage>
           alignment: Alignment.topRight,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 20),
-              child: isDoctor
-                  ? const DoctorRegistration()
-                  : const PatientRegistration(),
-            ),
+                margin: const EdgeInsets.only(top: 20),
+                child: const RegistrationCard()),
             OutlinedButton(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.resolveWith((states) {
@@ -119,27 +116,30 @@ class _RegistrationPageState extends State<RegistrationPage>
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 50),
-              child: SwitchListTile(
-                value: isDoctor,
-                onChanged: (value) async {
-                  setState(() {
-                    isDoctor = value;
-                  });
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  if (value) {
-                    _startAnimation();
-                  } else {
-                    _reverseAnimation();
-                  }
-                },
-                title: Text(
-                  "Are you a doctor ?",
-                  style: theme.textTheme.bodyText1,
-                ),
-                subtitle: const Text("Indenting to give service?"),
-              ),
+            BlocBuilder<RegistrationCubit, RegistrationState>(
+              builder: (context, state) {
+                return Container(
+                  margin: const EdgeInsets.only(top: 50),
+                  child: SwitchListTile(
+                    value: state is RegistrationDoctor,
+                    onChanged: (value) async {
+                      final cubit = context.read<RegistrationCubit>();
+                      cubit.toggleState();
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      if (value) {
+                        _startAnimation();
+                      } else {
+                        _reverseAnimation();
+                      }
+                    },
+                    title: Text(
+                      "Are you a doctor ?",
+                      style: theme.textTheme.bodyText1,
+                    ),
+                    subtitle: const Text("Indenting to give service?"),
+                  ),
+                );
+              },
             ),
           ],
         ),

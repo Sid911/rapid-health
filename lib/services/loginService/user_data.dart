@@ -41,7 +41,7 @@ class UserData {
   adapterName: "PatientAdapter",
 )
 class PatientData extends UserData {
-  PatientData({
+  const PatientData({
     required super.name,
     required super.password,
     required super.email,
@@ -107,7 +107,7 @@ class PatientData extends UserData {
   adapterName: "DoctorAdapter",
 )
 class DoctorData extends UserData {
-  DoctorData({
+  const DoctorData({
     required super.name,
     required super.password,
     required super.email,

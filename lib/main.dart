@@ -64,7 +64,9 @@ class _MyAppState extends State<MyApp> {
                   ),
               "setup": (ctx) => SetupPage(settingsService: settings),
               "register": (ctx) => BlocProvider(
-                    create: (context) => RegistrationCubit(),
+                    create: (context) => RegistrationCubit(
+                      authService: context.read<AuthServiceInterface>(),
+                    ),
                     child: const RegistrationPage(),
                   ),
             },
