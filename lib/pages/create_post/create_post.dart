@@ -1,5 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:rapid_health/global/location_selector.dart';
+
+import '../../utility/map_styles.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({Key? key}) : super(key: key);
@@ -9,6 +16,70 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
+  final Completer<GoogleMapController> _controller = Completer();
+
+  final CameraPosition _kDefault = const CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
+
+  Set<Marker> selectedLocationMarker = <Marker>{
+    const Marker(
+      markerId: MarkerId("userLocation"),
+      position: LatLng(37.42796133580664, -122.085749655962),
+    )
+  };
+
+  void setMarkerPosition(LatLng position) async {
+    final newCamPos = CameraPosition(target: position, zoom: 13);
+    final control = await _controller.future;
+    control.animateCamera(CameraUpdate.newCameraPosition(newCamPos));
+    setState(() {
+      selectedLocationMarker = {
+        Marker(
+          markerId: const MarkerId("selectedLocation"),
+          position: position,
+        ),
+      };
+    });
+  }
+
+  void requestPermissions() async {
+    final Location location = Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    setMarkerPosition(LatLng(
+      _locationData.latitude!,
+      _locationData.longitude!,
+    ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermissions();
+  } // Form thingy
+
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -25,15 +96,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
         ),
         onPressed: () {},
       ),
-      body: Container(
-        padding: const EdgeInsets.all(15),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            children: [
-              TextFormField(
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -51,7 +122,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -67,7 +141,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -87,7 +164,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   return null;
                 },
               ),
-              TextFormField(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -101,14 +181,62 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 maxLines: 3,
                 onChanged: (value) {},
                 validator: (value) {
-                  if (value == null || value.length < 15) {
+                  if (value == null || value.length < 10) {
                     return 'Please enter an elaborate address';
                   }
                   return null;
                 },
               ),
-            ],
-          ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 10, left: 10),
+              child: Text(
+                "Select your location 📍",
+                style: theme.textTheme.bodyText1,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 30),
+              height: 400,
+              child: GoogleMap(
+                zoomControlsEnabled: false,
+                zoomGesturesEnabled: false,
+                scrollGesturesEnabled: false,
+                tiltGesturesEnabled: false,
+                mapType: MapType.normal,
+                initialCameraPosition: _kDefault,
+                markers: selectedLocationMarker,
+                onTap: (pos) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return LocationSelector(
+                          initialPosition: pos,
+                          callback: setMarkerPosition,
+                        );
+                      },
+                    ),
+                  );
+                },
+                onMapCreated: (GoogleMapController controller) {
+                  controller.setMapStyle(
+                    theme.brightness == Brightness.dark
+                        ? MapStyles.dark
+                        : MapStyles.light,
+                  );
+                  _controller.complete(controller);
+                },
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                "Enter the location for the service in order to let users find the location",
+                style: theme.textTheme.subtitle2,
+              ),
+            )
+          ],
         ),
       ),
     );
