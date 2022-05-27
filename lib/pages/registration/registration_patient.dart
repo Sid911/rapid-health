@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 
 class PatientRegistration extends StatefulWidget {
   const PatientRegistration({Key? key}) : super(key: key);
@@ -8,7 +10,6 @@ class PatientRegistration extends StatefulWidget {
 }
 
 class _PatientRegistrationState extends State<PatientRegistration> {
-  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -18,13 +19,16 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         TextFormField(
           style: theme.textTheme.bodyText1,
           maxLines: 2,
+          onChanged: (value) {
+            context.read<RegistrationCubit>().setPatientAddress(value);
+          },
           decoration: const InputDecoration(
             labelText: "Address",
             labelStyle: TextStyle(fontSize: 12),
           ),
           validator: (value) {
             if (value == null || value.length < 8) {
-              return 'Please enter elaborate address';
+              return 'Please enter an elaborate address';
             }
             return null;
           },
@@ -41,7 +45,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
           initialDate: DateTime(2004),
           firstDate: DateTime(1900),
           lastDate: DateTime.now(),
-          onDateChanged: (DateTime value) {},
+          onDateChanged: (DateTime value) {
+            final cubit = context.read<RegistrationCubit>();
+            cubit.setPatientBirthDate(value);
+            cubit.setPatientAge(DateTime.now().year - value.year);
+          },
         ),
       ],
     );

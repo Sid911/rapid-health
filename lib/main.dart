@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
 import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
+import 'package:rapid_health/pages/create_post/create_post.dart';
 import 'package:rapid_health/pages/homepage/patient_homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
 import 'package:rapid_health/pages/registration/registration_page.dart';
@@ -21,7 +23,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('settings');
-  LocalServer.init();
+  await LocalServer.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
@@ -36,6 +38,34 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // This widget is the root of the application.
   final SettingsService settings = SettingsService();
+  final authService = LocalAuthService();
+  final Logger _logger = Logger();
+  late bool newUser;
+
+  @override
+  void initState() {
+    super.initState();
+    // Jank way of persistence
+    newUser = !settings.loggedInBefore;
+    if (!newUser) {
+      _logger.i(
+        "Refreshing Auth manager with "
+        "\nEmail: ${settings.loginEmail}"
+        "\nPassword: ${settings.loginPassword}",
+      );
+      if (settings.isUserDoctor) {
+        authService.loginDoctorWithEmailPassword(
+          email: settings.loginEmail,
+          password: settings.loginPassword,
+        );
+      } else {
+        authService.loginPatientWithEmailPassword(
+          email: settings.loginEmail,
+          password: settings.loginPassword,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +75,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, box, _) {
         return MultiProvider(
           providers: [
-            Provider<AuthServiceInterface>(create: (_) => LocalAuthService()),
+            Provider<AuthServiceInterface>(create: (_) => authService),
             Provider<ChatServiceInterface>(create: (_) => LocalChatService())
           ],
           child: MaterialApp(
@@ -69,8 +99,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                     child: const RegistrationPage(),
                   ),
+              "newPost": (ctx) => const CreatePostPage(),
             },
-            initialRoute: "login",
+            initialRoute: newUser ? "login" : "home",
           ),
         );
       },

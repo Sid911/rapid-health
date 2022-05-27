@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/global/logo_mini.dart';
+import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/pages/drawer/drawer.dart';
+import 'package:rapid_health/pages/homepage/services_catagory_mini.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
 
 import 'bookings_mini_widget.dart';
@@ -33,6 +36,8 @@ class _HomepageState extends State<Homepage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final authService = context.read<AuthServiceInterface>();
+    final currentUser = authService.currentUser?.userData;
     return Scaffold(
       extendBody: true,
       primary: true,
@@ -73,18 +78,31 @@ class _HomepageState extends State<Homepage>
       ),
       drawer: const CustomDrawer(),
       body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Home Page"),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 20,
               ),
-              BookingsMini(),
-            ],
-          ),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text.rich(
+                TextSpan(text: "Hi, there ", children: [
+                  TextSpan(
+                    text: currentUser == null ? "" : currentUser.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      backgroundColor: theme.primaryColor,
+                    ),
+                  ),
+                ]),
+                style: theme.textTheme.bodyText1,
+              ),
+            ),
+            const BookingsMini(),
+            const ServicesCategoryMini(),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/bloc/registration/registration_cubit.dart';
+import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/pages/registration/registration_card.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -20,10 +21,11 @@ class _RegistrationPageState extends State<RegistrationPage>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this,
-        duration: const Duration(
-          milliseconds: 1000,
-        ));
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 1000,
+      ),
+    );
 
     marginAnimation = Tween<double>(begin: 400, end: 250).animate(
       CurvedAnimation(
@@ -86,7 +88,14 @@ class _RegistrationPageState extends State<RegistrationPage>
                 }),
                 backgroundColor: MaterialStateProperty.all(theme.primaryColor),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final cubit = context.read<RegistrationCubit>();
+                final result = await cubit.registerUser();
+                if (result == LoginError.success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("User Registered !")));
+                }
+              },
               child: GlowIcon(
                 FlutterRemix.arrow_right_s_line,
                 glowColor: Colors.lightBlueAccent,

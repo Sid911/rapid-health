@@ -46,11 +46,12 @@ class _RegistrationCardState extends State<RegistrationCard> {
             ),
             TextFormField(
               keyboardType: TextInputType.name,
+              style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(
                 labelText: "Full Name",
                 labelStyle: TextStyle(fontSize: 12),
               ),
-              onFieldSubmitted: (value) {
+              onChanged: (value) {
                 context.read<RegistrationCubit>().setName(value);
               },
               validator: (value) {
@@ -62,11 +63,12 @@ class _RegistrationCardState extends State<RegistrationCard> {
             ),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
+              style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(
                 labelText: "Email",
                 labelStyle: TextStyle(fontSize: 12),
               ),
-              onFieldSubmitted: (value) {
+              onChanged: (value) {
                 context.read<RegistrationCubit>().setEmail(value);
               },
               validator: (value) {
@@ -78,12 +80,13 @@ class _RegistrationCardState extends State<RegistrationCard> {
             ),
             TextFormField(
               keyboardType: TextInputType.visiblePassword,
+              style: theme.textTheme.bodyText1,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: "Password",
                 labelStyle: TextStyle(fontSize: 12),
               ),
-              onFieldSubmitted: (value) {
+              onChanged: (value) {
                 context.read<RegistrationCubit>().setPassword(value);
               },
               validator: (value) {
@@ -95,11 +98,12 @@ class _RegistrationCardState extends State<RegistrationCard> {
             ),
             TextFormField(
               keyboardType: TextInputType.phone,
+              style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(
                 labelText: "Phone no.",
                 labelStyle: TextStyle(fontSize: 12),
               ),
-              onFieldSubmitted: (value) {
+              onChanged: (value) {
                 context.read<RegistrationCubit>().setPhone(value);
               },
               validator: (value) {
@@ -113,9 +117,8 @@ class _RegistrationCardState extends State<RegistrationCard> {
               builder: (context, state) {
                 if (state is RegistrationPatient) {
                   return const PatientRegistration();
-                } else {
-                  return const DoctorRegistration();
                 }
+                return const DoctorRegistration();
               },
             )
           ],

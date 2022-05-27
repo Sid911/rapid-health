@@ -52,6 +52,8 @@ class LocalServer {
       category: DoctorCategory.physician,
     );
     // Add dummy data for testing
+    // patientBox.clear();
+    // doctorsBox.clear();
     if (!patientBox.containsKey("siddevs@outlook.com")) {
       patientBox.put("siddevs@outlook.com", sid);
     }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:rapid_health/global/logo_mini.dart';
+
+import '../../interfaces/auth_service_interface.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({Key? key, this.index = 0}) : super(key: key);
@@ -22,6 +24,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final authService = context.read<AuthServiceInterface>();
+    final currentUser = authService.currentUser!.userData;
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: Container(
@@ -38,15 +42,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MaterialButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: LogoMini(
-                    darkMode: theme.brightness == Brightness.dark,
-                    height: 80,
-                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        FlutterRemix.arrow_left_s_line,
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10),
@@ -108,10 +114,30 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ],
             ),
-            TextButton.icon(
-                label: const Text("Settings"),
-                onPressed: () {},
-                icon: const Icon(FlutterRemix.settings_6_fill))
+            Row(
+              children: [
+                authService.currentUser!.isUserDoctor
+                    ? TextButton.icon(
+                        onPressed: () {
+                          Navigator.popAndPushNamed(context, "newPost");
+                        },
+                        icon: Icon(
+                          FlutterRemix.add_box_line,
+                          color: theme.textTheme.subtitle1?.color,
+                        ),
+                        label: const Text("New Post"),
+                      )
+                    : Container(),
+                TextButton.icon(
+                  label: const Text("Settings"),
+                  onPressed: () {},
+                  icon: Icon(
+                    FlutterRemix.settings_6_fill,
+                    color: theme.textTheme.subtitle1?.color,
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),
