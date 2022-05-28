@@ -117,19 +117,30 @@ class _CustomDrawerState extends State<CustomDrawer> {
             Row(
               children: [
                 authService.currentUser!.isUserDoctor
-                    ? TextButton.icon(
-                        onPressed: () {
-                          Navigator.popAndPushNamed(context, "newPost");
-                        },
-                        icon: Icon(
-                          FlutterRemix.add_box_line,
-                          color: theme.textTheme.subtitle1?.color,
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.popAndPushNamed(context, "newPost");
+                          },
+                          icon: Icon(
+                            FlutterRemix.add_box_line,
+                            color: theme.textTheme.subtitle1?.color,
+                          ),
+                          label: Text(
+                            "New Post",
+                            style: TextStyle(
+                              color: theme.textTheme.subtitle1?.color,
+                            ),
+                          ),
                         ),
-                        label: const Text("New Post"),
                       )
                     : Container(),
                 TextButton.icon(
-                  label: const Text("Settings"),
+                  label: Text(
+                    "Settings",
+                    style: TextStyle(color: theme.textTheme.subtitle1?.color),
+                  ),
                   onPressed: () {},
                   icon: Icon(
                     FlutterRemix.settings_6_fill,

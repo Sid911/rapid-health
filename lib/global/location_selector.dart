@@ -46,6 +46,7 @@ class _LocationSelectorState extends State<LocationSelector> {
           initialCameraPosition:
               CameraPosition(target: widget.initialPosition, zoom: 15),
           markers: markers,
+          myLocationButtonEnabled: false,
           myLocationEnabled: true,
           onTap: (pos) {
             setState(() {

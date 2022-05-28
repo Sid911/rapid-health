@@ -19,14 +19,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
   final CameraPosition _kDefault = const CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+    target: LatLng(21.250000, 81.629997),
     zoom: 14.4746,
   );
 
   Set<Marker> selectedLocationMarker = <Marker>{
     const Marker(
       markerId: MarkerId("userLocation"),
-      position: LatLng(37.42796133580664, -122.085749655962),
+      position: LatLng(21.250000, 81.629997),
     )
   };
 
@@ -212,7 +212,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     MaterialPageRoute(
                       builder: (context) {
                         return LocationSelector(
-                          initialPosition: pos,
+                          initialPosition:
+                              selectedLocationMarker.first.position,
                           callback: setMarkerPosition,
                         );
                       },
