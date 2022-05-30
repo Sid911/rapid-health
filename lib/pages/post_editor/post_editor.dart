@@ -1,23 +1,27 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:logger/logger.dart';
 import 'package:rapid_health/global/doctor_dropdown_button.dart';
 import 'package:rapid_health/global/location_selector.dart';
+import 'package:rapid_health/interfaces/posts_service_interface.dart';
+import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/utility/doctor_categories.dart';
 
+import '../../interfaces/auth_service_interface.dart';
 import '../../utility/map_styles.dart';
 
-class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({Key? key}) : super(key: key);
-
+class PostEditor extends StatefulWidget {
+  const PostEditor({Key? key}) : super(key: key);
   @override
-  State<CreatePostPage> createState() => _CreatePostPageState();
+  State<PostEditor> createState() => _PostEditorState();
 }
 
-class _CreatePostPageState extends State<CreatePostPage> {
+class _PostEditorState extends State<PostEditor> {
   //region Controllers
   final Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _titleController = TextEditingController();
@@ -25,6 +29,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   //endregion
+
+  late PostsServiceInterface postsService;
+  late AuthServiceInterface authService;
+
+  final Logger _logger = Logger();
+
   DoctorCategory category = DoctorCategory.emergency;
   final CameraPosition _kDefault = const CameraPosition(
     target: LatLng(21.250000, 81.629997),
@@ -85,9 +95,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
   @override
   void initState() {
     super.initState();
+    postsService = context.read<PostsServiceInterface>();
+    authService = context.read<AuthServiceInterface>();
     requestPermissions();
-  } // Form thingy
+  }
 
+  // Form thingy
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -102,7 +115,35 @@ class _CreatePostPageState extends State<CreatePostPage> {
           FlutterRemix.add_line,
           color: theme.textTheme.bodyText1?.color,
         ),
-        onPressed: () {},
+        onPressed: () async {
+          final now = DateTime.now();
+          final location = selectedLocationMarker.first.position;
+          final coordinate = [location.latitude, location.longitude];
+          final authID = authService.currentUser!.userData.email;
+          final postData = PostData(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            subtitle: _subtitleController.text,
+            postDate: now,
+            expireDate: now.add(const Duration(days: 90)),
+            authorUID: authID,
+            postCategory: category,
+            coordinates: coordinate,
+            address: _addressController.text,
+          );
+          try {
+            await postsService.addPostData(postData, authID);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Post added successfully!")),
+            );
+            Navigator.pop(context);
+          } on Exception catch (e, stacktrace) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Error Registering Post")),
+            );
+            _logger.e("Post: Error adding post", e, stacktrace);
+          }
+        },
       ),
       body: Form(
         key: _formKey,

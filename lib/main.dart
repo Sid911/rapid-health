@@ -11,9 +11,9 @@ import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
-import 'package:rapid_health/pages/create_post/create_post.dart';
 import 'package:rapid_health/pages/homepage/patient_homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
+import 'package:rapid_health/pages/post_editor/post_editor.dart';
 import 'package:rapid_health/pages/registration/registration_page.dart';
 import 'package:rapid_health/pages/setup/setup_page.dart';
 import 'package:rapid_health/services/chatStorageService/local_chat_service_impl.dart';
@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     child: const RegistrationPage(),
                   ),
-              "newPost": (ctx) => const CreatePostPage(),
+              "newPost": (ctx) => const PostEditor(),
             },
             initialRoute: newUser ? "login" : "home",
           ),

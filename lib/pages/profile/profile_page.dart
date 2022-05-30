@@ -3,6 +3,8 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/global/chips.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 
+import 'doctor_posts.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key, required this.userData, required this.isDoctor})
       : super(key: key);
@@ -94,9 +96,9 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: EdgeInsets.all(8.0),
                 child: UserChip(name: "doctor"),
               ),
-              // isDoctor
-              //     ? ProfileDoctorPosts(userData: userData as DoctorData)
-              //     : Container(),
+              isDoctor
+                  ? ProfileDoctorPosts(userData: userData as DoctorData)
+                  : Container(),
             ],
           ),
         ),

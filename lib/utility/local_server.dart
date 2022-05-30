@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
@@ -21,6 +22,8 @@ class LocalServer {
   static late Box<PostData> postDataBox;
   static late Box<Reviews> reviewsBox;
   //endregion
+
+  static final Logger _logger = Logger();
 
   LocalServer._private();
 
@@ -49,6 +52,9 @@ class LocalServer {
     postsBox = await Hive.openBox("posts");
     postDataBox = await Hive.openBox("postData");
     reviewsBox = await Hive.openBox("reviews");
+
+    postsBox.clear();
+    postDataBox.clear();
 
     // generate Dummy Data
     await generateDummyData();
@@ -140,9 +146,19 @@ class LocalServer {
           PostPreview.fromPostData(post, randomKey),
         ],
       );
+      _logger.i(
+        "Adding new Post from scratch"
+        "\nKey : $randomKey"
+        "\nFor AuthorUID : $uid",
+      );
     } else {
       postsObj = postsBox.get(uid)!;
       postsObj.previews.add(PostPreview.fromPostData(post, randomKey));
+      _logger.i(
+        "Adding new Post to already existing user index"
+        "\nKey : $randomKey"
+        "\nFor AuthorUID : $uid",
+      );
     }
     await postsBox.put(uid, postsObj);
   }

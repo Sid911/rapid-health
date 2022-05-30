@@ -46,16 +46,18 @@ class PostPreview {
   final String subtitle;
   @HiveField(2)
   final DoctorCategory postCategory;
-  @HiveField(3)
-  final List<double> coordinates;
+  // @HiveField(3)
+  // final List<double> coordinates;
   @HiveField(4)
   final String postDataHash;
+  @HiveField(3)
+  final DateTime postDate;
 
   PostPreview({
     required this.title,
     required this.subtitle,
     required this.postCategory,
-    required this.coordinates,
+    required this.postDate,
     required this.postDataHash,
   });
 
@@ -63,7 +65,7 @@ class PostPreview {
       : title = postData.title,
         subtitle = postData.subtitle,
         postCategory = postData.postCategory,
-        coordinates = postData.coordinates;
+        postDate = postData.postDate;
 }
 
 @HiveType(typeId: 10, adapterName: "PostsAdapter")

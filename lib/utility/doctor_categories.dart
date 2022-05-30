@@ -18,3 +18,23 @@ enum DoctorCategory {
   @HiveField(5)
   emergency,
 }
+
+extension Stringify on DoctorCategory {
+  String getString() {
+    switch (this) {
+      case DoctorCategory.physician:
+        return "Physician";
+
+      case DoctorCategory.dentist:
+        return "Dentist";
+      case DoctorCategory.gynecologist:
+        return "Gynecologist";
+      case DoctorCategory.ent:
+        return "ENT";
+      case DoctorCategory.orthopaedic:
+        return "Orthopaedic";
+      case DoctorCategory.emergency:
+        return "Emergency";
+    }
+  }
+}

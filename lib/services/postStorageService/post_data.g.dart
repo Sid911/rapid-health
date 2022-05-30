@@ -78,7 +78,7 @@ class PostPreviewAdapter extends TypeAdapter<PostPreview> {
       title: fields[0] as String,
       subtitle: fields[1] as String,
       postCategory: fields[2] as DoctorCategory,
-      coordinates: (fields[3] as List).cast<double>(),
+      postDate: fields[3] as DateTime,
       postDataHash: fields[4] as String,
     );
   }
@@ -93,10 +93,10 @@ class PostPreviewAdapter extends TypeAdapter<PostPreview> {
       ..write(obj.subtitle)
       ..writeByte(2)
       ..write(obj.postCategory)
-      ..writeByte(3)
-      ..write(obj.coordinates)
       ..writeByte(4)
-      ..write(obj.postDataHash);
+      ..write(obj.postDataHash)
+      ..writeByte(3)
+      ..write(obj.postDate);
   }
 
   @override

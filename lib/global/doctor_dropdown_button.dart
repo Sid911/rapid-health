@@ -18,7 +18,7 @@ class DoctorDropdownButton extends StatelessWidget {
       const DropdownMenuItem(
           child: Text("Orthopaedic"), value: DoctorCategory.orthopaedic),
       const DropdownMenuItem(
-          child: Text("England"), value: DoctorCategory.gynecologist),
+          child: Text("Gynecologist"), value: DoctorCategory.gynecologist),
       const DropdownMenuItem(
           child: Text("Dentist"), value: DoctorCategory.dentist),
       const DropdownMenuItem(child: Text("ENT"), value: DoctorCategory.ent),
