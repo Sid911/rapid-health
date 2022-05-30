@@ -58,6 +58,12 @@ class PostPreview {
     required this.coordinates,
     required this.postDataHash,
   });
+
+  PostPreview.fromPostData(PostData postData, this.postDataHash)
+      : title = postData.title,
+        subtitle = postData.subtitle,
+        postCategory = postData.postCategory,
+        coordinates = postData.coordinates;
 }
 
 @HiveType(typeId: 10, adapterName: "PostsAdapter")

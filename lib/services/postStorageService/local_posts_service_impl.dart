@@ -1,18 +1,12 @@
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/services/reviewStorageService/review_data.dart';
+import 'package:rapid_health/utility/local_server.dart';
 
 class LocalPostsService extends PostsServiceInterface {
   @override
-  Future<void> addPostData(PostData data) {
-    // TODO: implement addPostData
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> addPosts(Posts data) {
-    // TODO: implement addPosts
-    throw UnimplementedError();
+  Future<void> addPostData(PostData data, String authorID) async {
+    await LocalServer.addPost(authorID, data);
   }
 
   @override
@@ -22,9 +16,8 @@ class LocalPostsService extends PostsServiceInterface {
   }
 
   @override
-  Future<List<PostData>> getAllPostData() {
-    // TODO: implement getAllPostData
-    throw UnimplementedError();
+  Future<List<PostData>> getAllPostData() async {
+    return LocalServer.postDataBox.values.toList(growable: false);
   }
 
   @override
@@ -34,9 +27,8 @@ class LocalPostsService extends PostsServiceInterface {
   }
 
   @override
-  Future<Posts> getPosts(String authorUID) {
-    // TODO: implement getPosts
-    throw UnimplementedError();
+  Future<Posts> getPosts(String authorUID) async {
+    return LocalServer.postsBox.get(authorUID)!;
   }
 
   @override

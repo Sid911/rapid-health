@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:rapid_health/global/doctor_dropdown_button.dart';
 import 'package:rapid_health/global/location_selector.dart';
+import 'package:rapid_health/utility/doctor_categories.dart';
 
 import '../../utility/map_styles.dart';
 
@@ -16,8 +18,14 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
+  //region Controllers
   final Completer<GoogleMapController> _controller = Completer();
-
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _subtitleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  //endregion
+  DoctorCategory category = DoctorCategory.emergency;
   final CameraPosition _kDefault = const CameraPosition(
     target: LatLng(21.250000, 81.629997),
     zoom: 14.4746,
@@ -105,6 +113,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextFormField(
+                controller: _titleController,
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -126,6 +135,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
+                controller: _subtitleController,
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -145,6 +155,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextFormField(
+                controller: _descriptionController,
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -168,6 +179,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextFormField(
+                controller: _addressController,
                 keyboardType: TextInputType.text,
                 style: theme.textTheme.bodyText1,
                 decoration: InputDecoration(
@@ -186,6 +198,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   }
                   return null;
                 },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 20, left: 10, bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Major type of service you provide"),
+                  DoctorDropdownButton(
+                    value: category,
+                    onChanged: (value) {
+                      setState(() {
+                        category = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             Container(

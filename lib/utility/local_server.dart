@@ -2,31 +2,59 @@ import 'package:hive/hive.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
+import 'package:rapid_health/services/postStorageService/post_data.dart';
+import 'package:rapid_health/services/reviewStorageService/review_data.dart';
+import 'package:rapid_health/utility/randomString.dart';
 
 import 'doctor_categories.dart';
 
 class LocalServer {
   static final LocalServer _instance = LocalServer._private();
   static LocalServer get instance => _instance;
+
+  //region Hive Boxes
   static late Box<DoctorData> doctorsBox;
   static late Box<PatientData> patientBox;
   static late Box<Chat> chatsBox;
   static late Box<ChatData> conversationBox;
+  static late Box<Posts> postsBox;
+  static late Box<PostData> postDataBox;
+  static late Box<Reviews> reviewsBox;
+  //endregion
+
   LocalServer._private();
 
   static Future<void> init() async {
+    // Core auth and general adapters
     Hive.registerAdapter(UserDataAdapter());
     Hive.registerAdapter(PatientAdapter());
     Hive.registerAdapter(DoctorAdapter());
     Hive.registerAdapter(DoctorCategoriesAdapter());
+    // Chat based adapter
     Hive.registerAdapter(ChatAdapter());
     Hive.registerAdapter(ChatDataAdapter());
     Hive.registerAdapter(ChatPreviewAdapter());
+    // Post and review based Adapter
+    Hive.registerAdapter(PostPreviewAdapter());
+    Hive.registerAdapter(PostsAdapter());
+    Hive.registerAdapter(PostDataAdapter());
+
+    Hive.registerAdapter(ReviewDataAdapter());
+    Hive.registerAdapter(ReviewsAdapter());
+
     doctorsBox = await Hive.openBox<DoctorData>("doctors");
     patientBox = await Hive.openBox<PatientData>("patients");
     chatsBox = await Hive.openBox<Chat>("chats");
     conversationBox = await Hive.openBox<ChatData>("conversations");
+    postsBox = await Hive.openBox("posts");
+    postDataBox = await Hive.openBox("postData");
+    reviewsBox = await Hive.openBox("reviews");
+
     // generate Dummy Data
+    await generateDummyData();
+  }
+
+  static Future<void> generateDummyData() async {
     final sid = PatientData(
       name: 'Siddharth Sinha',
       password: "1a2b3c4d5e",
@@ -98,5 +126,24 @@ class LocalServer {
 
   static PatientData? getPatientData(String key) {
     return patientBox.get(key);
+  }
+
+  static Future<void> addPost(String uid, PostData post) async {
+    final randomKey = sha1RandomString();
+    postDataBox.put(randomKey, post);
+    Posts postsObj;
+    if (!postsBox.containsKey(uid)) {
+      // Create new index for the user
+      postsObj = Posts(
+        authorUID: uid,
+        previews: [
+          PostPreview.fromPostData(post, randomKey),
+        ],
+      );
+    } else {
+      postsObj = postsBox.get(uid)!;
+      postsObj.previews.add(PostPreview.fromPostData(post, randomKey));
+    }
+    await postsBox.put(uid, postsObj);
   }
 }

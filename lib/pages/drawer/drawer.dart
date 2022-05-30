@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:rapid_health/pages/profile/profile_page.dart';
 
 import '../../interfaces/auth_service_interface.dart';
 
@@ -26,6 +28,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
     final theme = Theme.of(context);
     final authService = context.read<AuthServiceInterface>();
     final currentUser = authService.currentUser!.userData;
+    String initials = "";
+    for (String s in currentUser.name.split(" ")) {
+      initials += s[0];
+    }
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: Container(
@@ -39,10 +45,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+            Hero(
+              tag: "profileAvatar",
+              child: Material(
+                color: Colors.transparent,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -52,16 +60,45 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         FlutterRemix.arrow_left_s_line,
                       ),
                     ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                              userData: currentUser,
+                              isDoctor: authService.currentUser!.isUserDoctor,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        radius: 40,
+                        child: Text(
+                          initials,
+                          style: theme.textTheme.headline4,
+                        ),
+                        backgroundColor: theme.primaryColor,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text.rich(
+                        TextSpan(
+                          text: currentUser.name,
+                          children: [
+                            TextSpan(
+                              text: '\n' + currentUser.email,
+                              style: const TextStyle(fontSize: 12),
+                            )
+                          ],
+                        ),
+                        style: theme.textTheme.bodyText1,
+                      ),
+                    ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    "Navigation",
-                    style: theme.textTheme.headline3,
-                  ),
-                ),
-              ],
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

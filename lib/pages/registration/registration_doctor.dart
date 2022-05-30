@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rapid_health/global/doctor_dropdown_button.dart';
 
 import '../../bloc/registration/registration_cubit.dart';
 import '../../utility/doctor_categories.dart';
@@ -12,23 +13,6 @@ class DoctorRegistration extends StatefulWidget {
 }
 
 class _DoctorRegistrationState extends State<DoctorRegistration> {
-  List<DropdownMenuItem<DoctorCategory>> get dropdownItems {
-    List<DropdownMenuItem<DoctorCategory>> menuItems = [
-      const DropdownMenuItem(
-          child: Text("Emergency"), value: DoctorCategory.emergency),
-      const DropdownMenuItem(
-          child: Text("Physician"), value: DoctorCategory.physician),
-      const DropdownMenuItem(
-          child: Text("Orthopaedic"), value: DoctorCategory.orthopaedic),
-      const DropdownMenuItem(
-          child: Text("England"), value: DoctorCategory.gynecologist),
-      const DropdownMenuItem(
-          child: Text("Dentist"), value: DoctorCategory.dentist),
-      const DropdownMenuItem(child: Text("ENT"), value: DoctorCategory.ent),
-    ];
-    return menuItems;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -91,15 +75,12 @@ class _DoctorRegistrationState extends State<DoctorRegistration> {
               BlocBuilder<RegistrationCubit, RegistrationState>(
                 builder: (context, state) {
                   if (state is RegistrationDoctor) {
-                    return DropdownButton<DoctorCategory>(
+                    return DoctorDropdownButton(
                       value: state.category,
-                      style: theme.textTheme.bodyText1,
-                      items: dropdownItems,
-                      onChanged: (value) {
-                        value ??= DoctorCategory.emergency;
+                      onChanged: (category) {
                         context
                             .read<RegistrationCubit>()
-                            .setDoctorWorkCategory(value);
+                            .setDoctorWorkCategory(category);
                       },
                     );
                   }
