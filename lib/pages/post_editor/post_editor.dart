@@ -36,6 +36,7 @@ class _PostEditorState extends State<PostEditor> {
   final Logger _logger = Logger();
 
   DoctorCategory category = DoctorCategory.emergency;
+
   final CameraPosition _kDefault = const CameraPosition(
     target: LatLng(21.250000, 81.629997),
     zoom: 14.4746,

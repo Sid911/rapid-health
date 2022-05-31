@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rapid_health/global/not_found_wrapper.dart';
 import 'package:rapid_health/global/post_preview.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
@@ -17,8 +18,10 @@ class _ProfileDoctorPostsState extends State<ProfileDoctorPosts> {
   late PostsServiceInterface postsService;
   late List<PostPreview> previews = List<PostPreview>.empty(growable: true);
   late DoctorData doc;
+
   final _listState = GlobalKey<AnimatedListState>(debugLabel: "DoctorPosts");
   bool noPostsFound = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,13 +32,13 @@ class _ProfileDoctorPostsState extends State<ProfileDoctorPosts> {
 
   void _getPostPreviews() async {
     final posts = await postsService.getPosts(doc.email);
-    final localPreviews = posts.previews;
-    if (localPreviews.isEmpty) {
+    if (posts == null) {
       setState(() {
         noPostsFound = true;
       });
       return;
     }
+    final localPreviews = posts.previews;
     int index = 0;
     for (PostPreview p in localPreviews) {
       previews.add(p);
@@ -58,17 +61,7 @@ class _ProfileDoctorPostsState extends State<ProfileDoctorPosts> {
             style: theme.textTheme.headline4,
           ),
         ),
-        if (noPostsFound)
-          SizedBox(
-            height: 300,
-            child: Center(
-              child: Text(
-                "No Posts Found",
-                style: theme.textTheme.bodyText1
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+        if (noPostsFound) const NotFoundWrapper(text: "No Posts Found"),
         AnimatedList(
           shrinkWrap: true,
           key: _listState,

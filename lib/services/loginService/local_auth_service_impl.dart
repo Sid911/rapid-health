@@ -70,6 +70,16 @@ class LocalAuthService extends AuthServiceInterface {
   }
 
   @override
+  Future<DoctorData?> getDoctorData(String uid) async {
+    return LocalServer.getDoctorData(uid);
+  }
+
+  @override
+  Future<PatientData?> getPatientData(String uid) async {
+    return LocalServer.getPatientData(uid);
+  }
+
+  @override
   bool? get isUserDoctor => _isDoc;
 
   @override

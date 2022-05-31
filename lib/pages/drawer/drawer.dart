@@ -16,17 +16,17 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   final totalTime = 700;
   late int index;
+  late AuthServiceInterface authService;
   @override
   void initState() {
     super.initState();
-
+    authService = context.read<AuthServiceInterface>();
     index = widget.index;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final authService = context.read<AuthServiceInterface>();
     final currentUser = authService.currentUser!.userData;
     String initials = "";
     for (String s in currentUser.name.split(" ")) {

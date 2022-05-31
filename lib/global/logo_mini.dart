@@ -15,9 +15,9 @@ class LogoMini extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final logoAsset =
-    //     darkMode ? "assets/1x/logoLight.png" : "assets/1x/logoDark.png";
-    const logoAsset = "assets/1x/logoLight.png";
+    final logoAsset =
+        darkMode ? "assets/1x/logoLight.png" : "assets/1x/LogoDark.png";
+    // const logoAsset = "assets/1x/logoLight.png";
     return Container(
       height: height,
       padding: edgeInsetsPadding,

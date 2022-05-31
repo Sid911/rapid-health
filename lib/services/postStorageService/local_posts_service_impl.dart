@@ -10,9 +10,8 @@ class LocalPostsService extends PostsServiceInterface {
   }
 
   @override
-  Future<void> addReview(String postID) {
-    // TODO: implement addReview
-    throw UnimplementedError();
+  Future<void> addReview(String postID, ReviewData data) async {
+    await LocalServer.addReview(postID, data);
   }
 
   @override
@@ -21,19 +20,17 @@ class LocalPostsService extends PostsServiceInterface {
   }
 
   @override
-  Future<PostData> getPostData(String postUID) {
-    // TODO: implement getPostData
-    throw UnimplementedError();
+  Future<PostData?> getPostData(String postUID) async {
+    return LocalServer.postDataBox.get(postUID);
   }
 
   @override
-  Future<Posts> getPosts(String authorUID) async {
-    return LocalServer.postsBox.get(authorUID)!;
+  Future<Posts?> getPosts(String authorUID) async {
+    return LocalServer.postsBox.get(authorUID);
   }
 
   @override
-  Future<Reviews> getReviewsForPost(String postUID) {
-    // TODO: implement getReviewsForPost
-    throw UnimplementedError();
+  Future<Reviews?> getReviewsForPost(String postUID) async {
+    return LocalServer.reviewsBox.get(postUID);
   }
 }

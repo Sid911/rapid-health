@@ -30,6 +30,9 @@ abstract class AuthServiceInterface {
   /// Registers doctors to the server
   Future<LoginError> registerDoctor(DoctorData data);
   void logout();
+
+  Future<DoctorData?> getDoctorData(String uid);
+  Future<PatientData?> getPatientData(String uid);
 }
 
 enum LoginError {

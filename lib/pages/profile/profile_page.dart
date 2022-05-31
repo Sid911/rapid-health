@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/global/chips.dart';
+import 'package:rapid_health/pages/profile/patient_reviews.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 
 import 'doctor_posts.dart';
@@ -43,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -96,9 +97,12 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: EdgeInsets.all(8.0),
                 child: UserChip(name: "doctor"),
               ),
-              isDoctor
-                  ? ProfileDoctorPosts(userData: userData as DoctorData)
-                  : Container(),
+              Builder(builder: (context) {
+                if (isDoctor) {
+                  return ProfileDoctorPosts(userData: userData as DoctorData);
+                }
+                return const ProfilePatientReviews();
+              })
             ],
           ),
         ),

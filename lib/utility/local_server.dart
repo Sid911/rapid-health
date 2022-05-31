@@ -53,8 +53,8 @@ class LocalServer {
     postDataBox = await Hive.openBox("postData");
     reviewsBox = await Hive.openBox("reviews");
 
-    postsBox.clear();
-    postDataBox.clear();
+    // postsBox.clear();
+    // postDataBox.clear();
 
     // generate Dummy Data
     await generateDummyData();
@@ -134,6 +134,9 @@ class LocalServer {
     return patientBox.get(key);
   }
 
+  /// region PostService
+
+  /// Adds post and synchronises PostPreview data
   static Future<void> addPost(String uid, PostData post) async {
     final randomKey = sha1RandomString();
     postDataBox.put(randomKey, post);
@@ -162,4 +165,28 @@ class LocalServer {
     }
     await postsBox.put(uid, postsObj);
   }
+
+  static Future<void> addReview(String postUID, ReviewData review) async {
+    final randomKey = sha1RandomString();
+    Reviews reviewsObj;
+    if (!reviewsBox.containsKey(postUID)) {
+      reviewsObj = Reviews(postUID, [review]);
+      _logger.i(
+        "Adding new Review from scratch"
+        "\nKey : $randomKey"
+        "\nFor AuthorUID : ${review.authorUID}",
+      );
+    } else {
+      reviewsObj = reviewsBox.get(postUID)!;
+      reviewsObj.reviews.add(review);
+      _logger.i(
+        "Adding new Review to already existing user index"
+        "\nKey : $randomKey"
+        "\nFor AuthorUID : ${review.authorUID}",
+      );
+    }
+    await reviewsBox.put(postUID, reviewsObj);
+  }
+
+  /// endregion
 }
