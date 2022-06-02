@@ -61,12 +61,13 @@ class LocalServer {
   }
 
   static Future<void> generateDummyData() async {
+    final now = DateTime.now();
     final sid = PatientData(
       name: 'Siddharth Sinha',
       password: "1a2b3c4d5e",
       email: "siddevs@outlook.com",
-      accountCreationDate: DateTime.now(),
-      lastLoggedIn: DateTime.now(),
+      accountCreationDate: now,
+      lastLoggedIn: now,
       phone: "0123456789",
       address: "Raipur Chhattisgarh",
       age: 19,
@@ -76,8 +77,8 @@ class LocalServer {
       name: "Siddharth Sinha",
       password: "0123456789",
       email: "siddharthsinha9752@gmail.com",
-      accountCreationDate: DateTime.now(),
-      lastLoggedIn: DateTime.now(),
+      accountCreationDate: now,
+      lastLoggedIn: now,
       phone: "9876543210",
       workAddress: "Gali 420 Testing Station,Raipur CG",
       workPhone: "5432109876",
@@ -85,6 +86,26 @@ class LocalServer {
       website: "https://sidthedoc.com",
       category: DoctorCategory.physician,
     );
+    final examplePost = PostData(
+      title: "Nowhere Hospital",
+      description:
+          "Etiam non lacus ornare, luctus sem in, sollicitudin enim. Morbi lobortis quis mauris ac euismod. "
+          "Aenean urna dolor, ultricies tincidunt lacus id, maximus pharetra massa. "
+          "Curabitur nec aliquam lacus. Suspendisse sit amet augue feugiat, luctus lorem eget, semper mi. "
+          "Curabitur neque nulla, dictum et tortor sit amet, eleifend pharetra elit. Suspendisse mattis dignissim nisl, at tincidunt orci placerat et. "
+          "Phasellus non quam augue.",
+      subtitle: "To infinity and beyond !",
+      postDate: now,
+      expireDate: now,
+      authorUID: sidDoc.email,
+      postCategory: DoctorCategory.emergency,
+      coordinates: [34.209515, 77.615112],
+      address: "Middle of nowhere, Ladakh, JK, India",
+      postHash: "averyrandomhash",
+    );
+    if (!postsBox.containsKey("siddharthsinha9752@gmail.com")) {
+      addPost("siddharthsinha9752@gmail.com", examplePost);
+    }
     // Add dummy data for testing
     // patientBox.clear();
     // doctorsBox.clear();
@@ -139,14 +160,15 @@ class LocalServer {
   /// Adds post and synchronises PostPreview data
   static Future<void> addPost(String uid, PostData post) async {
     final randomKey = sha1RandomString();
-    postDataBox.put(randomKey, post);
+    final finalPost = post.copyWith(postHash: randomKey);
+    postDataBox.put(randomKey, finalPost);
     Posts postsObj;
     if (!postsBox.containsKey(uid)) {
       // Create new index for the user
       postsObj = Posts(
         authorUID: uid,
         previews: [
-          PostPreview.fromPostData(post, randomKey),
+          PostPreview.fromPostData(finalPost),
         ],
       );
       _logger.i(
@@ -156,7 +178,7 @@ class LocalServer {
       );
     } else {
       postsObj = postsBox.get(uid)!;
-      postsObj.previews.add(PostPreview.fromPostData(post, randomKey));
+      postsObj.previews.add(PostPreview.fromPostData(finalPost));
       _logger.i(
         "Adding new Post to already existing user index"
         "\nKey : $randomKey"

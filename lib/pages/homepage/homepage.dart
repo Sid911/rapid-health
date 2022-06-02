@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/global/logo_mini.dart';
+import 'package:rapid_health/global/not_found_wrapper.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/pages/drawer/drawer.dart';
-import 'package:rapid_health/pages/homepage/services_catagory_mini.dart';
+import 'package:rapid_health/pages/homepage/services_category_mini.dart';
+import 'package:rapid_health/pages/search/search_page.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
 
 import 'bookings_mini_widget.dart';
@@ -46,6 +48,23 @@ class _HomepageState extends State<Homepage>
         actions: [
           IconButton(
             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+            },
+            icon: Hero(
+              tag: "search",
+              child: Icon(
+                settings.darkMode
+                    ? FlutterRemix.search_2_line
+                    : FlutterRemix.search_2_fill,
+                size: 20,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
               settings.darkMode = !settings.darkMode;
             },
             icon: Icon(
@@ -78,31 +97,52 @@ class _HomepageState extends State<Homepage>
       ),
       drawer: const CustomDrawer(),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-                vertical: 20,
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text.rich(
-                TextSpan(text: "Hi, there ", children: [
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 20,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text.rich(
                   TextSpan(
-                    text: currentUser == null ? "" : currentUser.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      backgroundColor: theme.primaryColor,
-                    ),
+                    text: "Hi, there ",
+                    children: [
+                      TextSpan(
+                        text: currentUser == null ? "" : currentUser.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          backgroundColor: theme.primaryColor,
+                        ),
+                      ),
+                    ],
                   ),
-                ]),
-                style: theme.textTheme.bodyText1,
+                  style: theme.textTheme.bodyText1,
+                ),
               ),
-            ),
-            const BookingsMini(),
-            const ServicesCategoryMini(),
-          ],
+              const BookingsMini(),
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 20),
+                child: Text(
+                  "Services",
+                  style: theme.textTheme.headline4,
+                ),
+              ),
+              const ServicesCategoryMini(),
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 20),
+                child: Text(
+                  "Recent Chats",
+                  style: theme.textTheme.headline4,
+                ),
+              ),
+              const NotFoundWrapper(text: "No recent chats"),
+            ],
+          ),
         ),
       ),
     );

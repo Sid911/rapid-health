@@ -11,7 +11,7 @@ import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
-import 'package:rapid_health/pages/homepage/patient_homepage.dart';
+import 'package:rapid_health/pages/homepage/homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
 import 'package:rapid_health/pages/post_editor/post_editor.dart';
 import 'package:rapid_health/pages/registration/registration_page.dart';

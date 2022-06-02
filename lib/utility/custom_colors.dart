@@ -59,8 +59,8 @@ class Themes {
       textTheme: const TextTheme(
         headline2: TextStyle(
             color: Color(0xFF393E46),
-            fontFamily: "Lato",
-            fontWeight: FontWeight.bold,
+            fontFamily: "SketchBook",
+            fontWeight: FontWeight.normal,
             fontSize: 40),
         headline3: TextStyle(
           color: Color(0xFF6A7484),
@@ -68,10 +68,11 @@ class Themes {
           fontSize: 26,
         ),
         headline4: TextStyle(
-            color: Color(0xFF393E46),
-            fontFamily: "Lato",
-            fontWeight: FontWeight.bold,
-            fontSize: 20),
+          color: Color(0xFF393E46),
+          fontFamily: "Sacramento",
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
         bodyText1: TextStyle(
             color: Color(0xFF393E46), fontFamily: "Lato", fontSize: 16),
         subtitle1: TextStyle(
@@ -98,16 +99,19 @@ class Themes {
           900: Color(0xFF212121),
         },
       ));
-  final ThemeData darkTheme = ThemeData(
+  final ThemeData darkTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: const Color(0xFF000000),
-    primarySwatch: Colors.grey,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(
           const Color(0xFF212121),
         ),
       ),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: Colors.grey.shade800,
+      contentTextStyle: const TextStyle(color: Colors.white),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: MaterialStateProperty.all(
@@ -128,8 +132,8 @@ class Themes {
     textTheme: const TextTheme(
       headline2: TextStyle(
         color: Color(0xFFE6E6E6),
-        fontFamily: "Lato",
-        fontWeight: FontWeight.bold,
+        fontFamily: "SketchBook",
+        fontWeight: FontWeight.normal,
         fontSize: 38,
       ),
       headline3: TextStyle(
@@ -140,7 +144,7 @@ class Themes {
       ),
       headline4: TextStyle(
         color: Color(0xFFE6E6E6),
-        fontFamily: "Lato",
+        fontFamily: "Sacramento",
         fontWeight: FontWeight.bold,
         fontSize: 20,
       ),

@@ -61,17 +61,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfilePage(
-                              userData: currentUser,
-                              isDoctor: authService.currentUser!.isUserDoctor,
-                            ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(
+                            userData: currentUser,
+                            isDoctor: authService.currentUser!.isUserDoctor,
                           ),
-                        );
-                      },
+                        ),
+                      ),
                       child: CircleAvatar(
                         radius: 40,
                         child: Text(
@@ -114,9 +112,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, "about");
-                  },
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(
+                        userData: currentUser,
+                        isDoctor: authService.currentUser!.isUserDoctor,
+                      ),
+                    ),
+                  ),
                   child: Text(
                     " - Profile",
                     style: theme.textTheme.subtitle1?.copyWith(

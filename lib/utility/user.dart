@@ -15,4 +15,18 @@ class User {
 
   String? profilePicLink;
   String get uid => isUserDoctor ? doctorData.uid : patientData.uid;
+  UserUID get parsedUID => UserUID.fromString(uid);
+}
+
+class UserUID {
+  bool isDoctor;
+  String id;
+  UserUID({required this.isDoctor, required this.id});
+  UserUID.fromString(String value)
+      : isDoctor = true,
+        id = "" {
+    final list = value.trim().split(":");
+    isDoctor = list.first == "doctor";
+    id = list.last;
+  }
 }

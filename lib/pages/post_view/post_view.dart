@@ -1,20 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rapid_health/global/author_card.dart';
 import 'package:rapid_health/global/loading_wrapper.dart';
 import 'package:rapid_health/global/not_found_wrapper.dart';
+import 'package:rapid_health/global/post_header.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
 import 'package:rapid_health/pages/post_view/reviews_widget.dart';
+import 'package:rapid_health/pages/review_editor/review_editor.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/services/reviewStorageService/review_data.dart';
-import 'package:rapid_health/utility/doctor_categories.dart';
 
-import '../../global/post_preview.dart';
 import '../../utility/map_styles.dart';
 
 class PostViewPage extends StatefulWidget {
@@ -25,6 +26,12 @@ class PostViewPage extends StatefulWidget {
   }) : super(key: key);
   final String postUID;
   final PostPreview previewData;
+  PostViewPage.fromPostData({
+    Key? key,
+    required PostData postData,
+  })  : postUID = postData.postHash,
+        previewData = PostPreview.fromPostData(postData),
+        super(key: key);
   @override
   State<PostViewPage> createState() => _PostViewPageState();
 }
@@ -56,187 +63,134 @@ class _PostViewPageState extends State<PostViewPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(5),
-          child: SingleChildScrollView(
+          child: ListView(
             physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Hero(
-                  tag: preview.postDataHash,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: theme.primaryColor,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 10,
-                            color: (darkMode
-                                    ? Colors.lightBlueAccent
-                                    : Colors.black)
-                                .withOpacity(darkMode ? 0.2 : 0.1),
-                            offset: const Offset(0, 15),
-                            spreadRadius: -10,
-                          ),
-                        ],
+            children: [
+              PostHeader(postData: preview),
+              FutureBuilder<PostData?>(
+                future: postsService.getPostData(widget.postUID),
+                builder: (context, snapshot) {
+                  final data = snapshot.data;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SubtitleText(theme: theme, string: "Description"),
+                      snapshot.hasData
+                          ? Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(data!.description))
+                          : const LoadingWrapper(),
+                      _SubtitleText(
+                        theme: theme,
+                        string: "Location",
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      if (snapshot.hasData && data != null)
+                        SizedBox(
+                          height: 300,
+                          child: GoogleMap(
+                            zoomControlsEnabled: false,
+                            zoomGesturesEnabled: false,
+                            scrollGesturesEnabled: false,
+                            tiltGesturesEnabled: false,
+                            mapType: MapType.normal,
+                            initialCameraPosition: CameraPosition(
+                              zoom: 10,
+                              target: LatLng(
+                                  data.coordinates[0], data.coordinates[1]),
+                            ),
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId("init"),
+                                position: LatLng(
+                                    data.coordinates[0], data.coordinates[1]),
+                              )
+                            },
+                            onMapCreated: (GoogleMapController controller) {
+                              controller.setMapStyle(
+                                theme.brightness == Brightness.dark
+                                    ? MapStyles.dark
+                                    : MapStyles.light,
+                              );
+                              _controller.complete(controller);
+                            },
+                            trafficEnabled: true,
+                          ),
+                        )
+                      else
+                        const LoadingWrapper(
+                          height: 300,
+                        ),
+                      _SubtitleText(theme: theme, string: "Author"),
+                      if (data != null)
+                        FutureBuilder<DoctorData?>(
+                          future: authService.getDoctorData(data.authorUID),
+                          builder: (context, snap) {
+                            if (snap.hasData && snap.data != null) {
+                              return AuthorCard(
+                                  userData: snap.data!, isDoctor: true);
+                            }
+                            return const LoadingWrapper();
+                          },
+                        ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  CustomChip(
-                                    darkMode: darkMode,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    child: Text(
-                                      preview.postDate
-                                          .toIso8601String()
-                                          .substring(0, 10)
-                                          .replaceAll("-", "/"),
-                                      style: theme.textTheme.subtitle2
-                                          ?.copyWith(fontSize: 10),
-                                    ),
-                                  ),
-                                  CustomChip(
-                                    darkMode: darkMode,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    child: Text(
-                                      preview.postCategory.getString(),
-                                      style: const TextStyle(fontSize: 11),
-                                    ),
-                                  ),
-                                  CustomChip(
-                                    darkMode: darkMode,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    child: const Text(
-                                      "2.5 Km",
-                                      style: TextStyle(fontSize: 11),
-                                    ),
-                                  ),
-                                ],
+                          _SubtitleText(theme: theme, string: "Reviews"),
+                          if (!authService.isUserDoctor!)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: darkMode
+                                    ? Colors.blueGrey.shade600
+                                    : Colors.blueGrey.shade200,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 5),
-                            child: Text(
-                              preview.title,
-                              style: theme.textTheme.bodyText1,
-                              maxLines: 2,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 5),
-                            child: Text(
-                              "'${preview.subtitle}'",
-                              style: theme.textTheme.subtitle2,
-                              maxLines: 2,
-                            ),
-                          ),
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ReviewEditorPage(
+                                        authorUID: authService.currentUser!.uid,
+                                        postID: preview.postDataHash,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  FlutterRemix.menu_add_line,
+                                  size: 20,
+                                  color: theme.textTheme.bodyText1?.color,
+                                ),
+                                label: Text(
+                                  "Add review",
+                                  style: theme.textTheme.bodyText2,
+                                ),
+                              ),
+                            )
                         ],
                       ),
-                    ),
-                  ),
-                ),
-                FutureBuilder<PostData?>(
-                  future: postsService.getPostData(widget.postUID),
-                  builder: (context, snapshot) {
-                    final data = snapshot.data;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _SubtitleText(theme: theme, string: "Description"),
-                        snapshot.hasData
-                            ? Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(data!.description))
-                            : const LoadingWrapper(),
-                        _SubtitleText(
-                          theme: theme,
-                          string: "Location",
-                        ),
-                        if (snapshot.hasData && data != null)
-                          SizedBox(
-                            height: 300,
-                            child: GoogleMap(
-                              zoomControlsEnabled: false,
-                              zoomGesturesEnabled: false,
-                              scrollGesturesEnabled: false,
-                              tiltGesturesEnabled: false,
-                              mapType: MapType.normal,
-                              initialCameraPosition: CameraPosition(
-                                zoom: 10,
-                                target: LatLng(
-                                    data.coordinates[0], data.coordinates[1]),
-                              ),
-                              markers: {
-                                Marker(
-                                  markerId: const MarkerId("init"),
-                                  position: LatLng(
-                                      data.coordinates[0], data.coordinates[1]),
-                                )
-                              },
-                              onMapCreated: (GoogleMapController controller) {
-                                controller.setMapStyle(
-                                  theme.brightness == Brightness.dark
-                                      ? MapStyles.dark
-                                      : MapStyles.light,
-                                );
-                                _controller.complete(controller);
-                              },
-                            ),
-                          )
-                        else
-                          const LoadingWrapper(
-                            height: 300,
-                          ),
-                        _SubtitleText(theme: theme, string: "Author"),
-                        if (data != null)
-                          FutureBuilder<DoctorData?>(
-                            future: authService.getDoctorData(data.authorUID),
-                            builder: (context, snap) {
-                              if (snap.hasData && snap.data != null) {
-                                return AuthorCard(
-                                    userData: snap.data!, isDoctor: true);
-                              }
-                              return const LoadingWrapper();
-                            },
-                          ),
-                        _SubtitleText(theme: theme, string: "Reviews"),
-                      ],
-                    );
-                  },
-                ),
-                FutureBuilder<Reviews?>(
-                  future: postsService.getReviewsForPost(widget.postUID),
-                  builder: (ctx, snapshot) {
-                    if (!snapshot.hasData) {
+                    ],
+                  );
+                },
+              ),
+              FutureBuilder<Reviews?>(
+                future: postsService.getReviewsForPost(widget.postUID),
+                builder: (ctx, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const NotFoundWrapper(text: "No reviews Found");
+                  }
+                  final data = snapshot.data;
+                  if (data != null) {
+                    if (data.reviews.isEmpty) {
                       return const NotFoundWrapper(text: "No reviews Found");
                     }
-                    final data = snapshot.data;
-                    if (data != null) {
-                      if (data.reviews.isEmpty) {
-                        return const NotFoundWrapper(text: "No reviews Found");
-                      }
-                      return ReviewsWidget(reviews: data);
-                    }
-                    return const LoadingWrapper();
-                  },
-                )
-              ],
-            ),
+                    return ReviewsWidget(reviews: data);
+                  }
+                  return const LoadingWrapper();
+                },
+              )
+            ],
           ),
         ),
       ),

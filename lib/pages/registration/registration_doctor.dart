@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rapid_health/global/doctor_dropdown_button.dart';
 
 import '../../bloc/registration/registration_cubit.dart';
-import '../../utility/doctor_categories.dart';
 
 class DoctorRegistration extends StatefulWidget {
   const DoctorRegistration({Key? key}) : super(key: key);

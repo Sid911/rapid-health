@@ -82,3 +82,9 @@ flutter:
           style: italic
         - asset: assets/fonts/Lato-Bold.ttf
           weight: 800
+    - family: Sacramento
+      fonts:
+        - asset: assets/fonts/Sacramento-Regular.ttf
+    - family: SketchBook
+      fonts:
+        - asset: assets/fonts/SketchBook.ttf

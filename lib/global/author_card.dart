@@ -21,7 +21,10 @@ class AuthorCard extends StatelessWidget {
       initials += s[0];
     }
     return Container(
-      color: backgroundColor ?? theme.primaryColor,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? theme.primaryColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

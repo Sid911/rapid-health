@@ -56,7 +56,6 @@ class PostPreviewWidget extends StatelessWidget {
                     Row(
                       children: [
                         CustomChip(
-                          darkMode: darkMode,
                           margin: const EdgeInsets.symmetric(horizontal: 2),
                           child: Text(
                             preview.postDate
@@ -68,7 +67,6 @@ class PostPreviewWidget extends StatelessWidget {
                           ),
                         ),
                         CustomChip(
-                          darkMode: darkMode,
                           margin: const EdgeInsets.symmetric(horizontal: 2),
                           child: Text(
                             preview.postCategory.getString(),
@@ -108,17 +106,16 @@ class PostPreviewWidget extends StatelessWidget {
 }
 
 class CustomChip extends StatelessWidget {
-  const CustomChip(
-      {Key? key, required this.darkMode, required this.child, this.margin})
+  const CustomChip({Key? key, required this.child, this.margin})
       : super(key: key);
 
-  final bool darkMode;
   final Widget child;
   final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final darkMode = theme.brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(10),
       margin: margin,

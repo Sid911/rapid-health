@@ -24,6 +24,8 @@ class PostData {
   final List<double> coordinates;
   @HiveField(8)
   final String address;
+  @HiveField(9)
+  final String postHash;
 
   PostData({
     required this.title,
@@ -35,7 +37,34 @@ class PostData {
     required this.postCategory,
     required this.coordinates,
     required this.address,
+    required this.postHash,
   });
+
+  PostData copyWith({
+    String? title,
+    String? description,
+    String? subtitle,
+    DateTime? postDate,
+    DateTime? expireDate,
+    String? authorUID,
+    DoctorCategory? postCategory,
+    List<double>? coordinates,
+    String? address,
+    String? postHash,
+  }) {
+    return PostData(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      subtitle: subtitle ?? this.subtitle,
+      postDate: postDate ?? this.postDate,
+      expireDate: expireDate ?? this.expireDate,
+      authorUID: authorUID ?? this.authorUID,
+      postCategory: postCategory ?? this.postCategory,
+      coordinates: coordinates ?? this.coordinates,
+      address: address ?? this.address,
+      postHash: postHash ?? this.postHash,
+    );
+  }
 }
 
 @HiveType(typeId: 9, adapterName: "PostPreviewAdapter")
@@ -61,11 +90,12 @@ class PostPreview {
     required this.postDataHash,
   });
 
-  PostPreview.fromPostData(PostData postData, this.postDataHash)
+  PostPreview.fromPostData(PostData postData)
       : title = postData.title,
         subtitle = postData.subtitle,
         postCategory = postData.postCategory,
-        postDate = postData.postDate;
+        postDate = postData.postDate,
+        postDataHash = postData.postHash;
 }
 
 @HiveType(typeId: 10, adapterName: "PostsAdapter")

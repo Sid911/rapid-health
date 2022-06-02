@@ -131,6 +131,7 @@ class _PostEditorState extends State<PostEditor> {
             postCategory: category,
             coordinates: coordinate,
             address: _addressController.text,
+            postHash: '',
           );
           try {
             await postsService.addPostData(postData, authID);

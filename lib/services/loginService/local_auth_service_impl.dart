@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
 import 'package:rapid_health/utility/local_server.dart';
@@ -15,7 +14,6 @@ class LocalAuthService extends AuthServiceInterface {
   bool _auth = false;
   User? _currentUser;
   final SettingsService settings = SettingsService();
-  final Logger _logger = Logger();
   @override
   Future<LoginError> loginDoctorWithEmailPassword({
     required String email,
@@ -26,6 +24,7 @@ class LocalAuthService extends AuthServiceInterface {
       _auth = true;
       final user = LocalServer.getDoctorData(email)!;
       _currentUser = User(userData: user, isUserDoctor: true);
+      _isDoc = true;
       settings.saveUser(user);
     }
     return result;
@@ -41,6 +40,7 @@ class LocalAuthService extends AuthServiceInterface {
       _auth = true;
       final user = LocalServer.getPatientData(email)!;
       _currentUser = User(userData: user, isUserDoctor: false);
+      _isDoc = false;
       settings.saveUser(user);
     }
     return result;

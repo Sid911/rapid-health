@@ -24,7 +24,6 @@ extension Stringify on DoctorCategory {
     switch (this) {
       case DoctorCategory.physician:
         return "Physician";
-
       case DoctorCategory.dentist:
         return "Dentist";
       case DoctorCategory.gynecologist:
