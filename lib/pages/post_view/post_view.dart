@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:rapid_health/global/not_found_wrapper.dart';
 import 'package:rapid_health/global/post_header.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
+import 'package:rapid_health/pages/bookings_editor/booking_editor.dart';
 import 'package:rapid_health/pages/post_view/reviews_widget.dart';
 import 'package:rapid_health/pages/review_editor/review_editor.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
@@ -60,6 +62,33 @@ class _PostViewPageState extends State<PostViewPage> {
         backgroundColor: theme.scaffoldBackgroundColor,
         title: const Text("Post Details"),
       ),
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BookingEditorPage(),
+            ),
+          );
+        },
+        child: GlowContainer(
+          borderRadius: BorderRadius.circular(10),
+          color: darkMode ? Colors.blueGrey.shade600 : Colors.blueGrey.shade200,
+          padding: const EdgeInsets.all(15),
+          glowColor: Colors.lightBlueAccent,
+          spreadRadius: -10,
+          offset: const Offset(0, 10),
+          blurRadius: 20,
+          width: 150,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text("Book Service"),
+              Icon(FlutterRemix.health_book_line),
+            ],
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(5),
@@ -81,10 +110,16 @@ class _PostViewPageState extends State<PostViewPage> {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(data!.description))
                           : const LoadingWrapper(),
-                      _SubtitleText(
-                        theme: theme,
-                        string: "Location",
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Divider(
+                          thickness: 5,
+                          color: darkMode
+                              ? Colors.blueGrey.shade300
+                              : Colors.blueGrey.shade700,
+                        ),
                       ),
+                      _SubtitleText(theme: theme, string: "Location"),
                       if (snapshot.hasData && data != null)
                         SizedBox(
                           height: 300,

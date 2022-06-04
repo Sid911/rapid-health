@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
+import 'package:rapid_health/services/bookingStorageService/booking_data.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
@@ -21,6 +22,9 @@ class LocalServer {
   static late Box<Posts> postsBox;
   static late Box<PostData> postDataBox;
   static late Box<Reviews> reviewsBox;
+  static late Box<BookingData> bookingsBox;
+  static late Box<DoctorBookings> docBookings;
+  static late Box<PatientBookings> userBookings;
   //endregion
 
   static final Logger _logger = Logger();
@@ -45,6 +49,9 @@ class LocalServer {
     Hive.registerAdapter(ReviewDataAdapter());
     Hive.registerAdapter(ReviewsAdapter());
 
+    Hive.registerAdapter(PatientBookingsAdapter());
+    Hive.registerAdapter(DoctorBookingsAdapter());
+
     doctorsBox = await Hive.openBox<DoctorData>("doctors");
     patientBox = await Hive.openBox<PatientData>("patients");
     chatsBox = await Hive.openBox<Chat>("chats");
@@ -52,7 +59,8 @@ class LocalServer {
     postsBox = await Hive.openBox("posts");
     postDataBox = await Hive.openBox("postData");
     reviewsBox = await Hive.openBox("reviews");
-
+    userBookings = await Hive.openBox("userBookings");
+    docBookings = await Hive.openBox("docBookings");
     // postsBox.clear();
     // postDataBox.clear();
 
@@ -208,6 +216,34 @@ class LocalServer {
       );
     }
     await reviewsBox.put(postUID, reviewsObj);
+  }
+
+  /// endregion
+
+  /// region Booking Service
+
+  static Future<void> addBooking(String userUID, BookingData data) async {
+    final randomKey = sha1RandomString();
+    bookingsBox.put(randomKey, data);
+    // sync with each party's indexes
+    // doctor sync
+    DoctorBookings docObj;
+    if (!docBookings.containsKey(data.doctorUID)) {
+      // if doctor doesn't have an index yet make and index
+      docObj = DoctorBookings(data.doctorUID, [randomKey]);
+    } else {
+      docObj = docBookings.get(data.doctorUID)!;
+      docObj.bookingUIDs.add(randomKey);
+    }
+    docBookings.put(docObj.doctorUID, docObj);
+    // user sync
+    PatientBookings userObj;
+    if (!userBookings.containsKey(data.patientUID)) {
+      userObj = PatientBookings(data.patientUID, [randomKey]);
+    } else {
+      userObj = userBookings.get(data.patientUID)!;
+      userObj.bookingUIDs.add(randomKey);
+    }
   }
 
   /// endregion

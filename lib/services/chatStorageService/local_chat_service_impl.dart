@@ -6,13 +6,13 @@ import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 class LocalChatService extends ChatServiceInterface {
   //two boxes one for previews and one for details
   @override
-  List<ChatPreview> getChatPreviews() {
+  Future<List<ChatPreview>> getChatPreviews() async {
     // TODO: implement getChatPreviews
     throw UnimplementedError();
   }
 
   @override
-  ChatData loadChatData() {
+  Future<ChatData> loadChatData() async {
     // TODO: implement loadChatData
     throw UnimplementedError();
   }

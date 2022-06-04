@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/utility/doctor_categories.dart';
 
-import 'post_preview.dart';
+import 'chips.dart';
 
 class PostHeader extends StatelessWidget {
   const PostHeader({
