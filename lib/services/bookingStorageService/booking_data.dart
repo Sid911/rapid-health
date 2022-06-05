@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 
 part 'booking_data.g.dart';
@@ -27,6 +28,9 @@ class BookingData {
   @HiveField(5)
   final String postUID;
 
+  @HiveField(6)
+  final TimeOfDay time;
+
   BookingData({
     required this.patientUID,
     required this.doctorUID,
@@ -34,6 +38,7 @@ class BookingData {
     required this.bookingDate,
     required this.isValid,
     required this.postUID,
+    required this.time,
   });
 
   ///
@@ -44,6 +49,7 @@ class BookingData {
     DateTime? bookingDate,
     bool? isValid,
     String? postUID,
+    TimeOfDay? time,
   }) {
     return BookingData(
       patientUID: patientUID ?? this.patientUID,
@@ -52,6 +58,7 @@ class BookingData {
       bookingDate: bookingDate ?? this.bookingDate,
       isValid: isValid ?? this.isValid,
       postUID: postUID ?? this.postUID,
+      time: time ?? this.time,
     );
   }
 }

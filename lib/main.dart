@@ -9,13 +9,16 @@ import 'package:provider/provider.dart';
 import 'package:rapid_health/bloc/loginBloc/login_ui_cubit.dart';
 import 'package:rapid_health/bloc/registration/registration_cubit.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
+import 'package:rapid_health/interfaces/booking_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
+import 'package:rapid_health/pages/bookings/bookings.dart';
 import 'package:rapid_health/pages/homepage/homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
 import 'package:rapid_health/pages/post_editor/post_editor.dart';
 import 'package:rapid_health/pages/registration/registration_page.dart';
 import 'package:rapid_health/pages/setup/setup_page.dart';
+import 'package:rapid_health/services/bookingStorageService/local_booking_storage_service.dart';
 import 'package:rapid_health/services/chatStorageService/local_chat_service_impl.dart';
 import 'package:rapid_health/services/loginService/local_auth_service_impl.dart';
 import 'package:rapid_health/services/postStorageService/local_posts_service_impl.dart';
@@ -87,6 +90,9 @@ class _MyAppState extends State<MyApp> {
             Provider<AuthServiceInterface>(create: (_) => authService),
             Provider<ChatServiceInterface>(create: (_) => LocalChatService()),
             Provider<PostsServiceInterface>(create: (_) => LocalPostsService()),
+            Provider<BookingServiceInterface>(
+              create: (_) => LocalBookingService(),
+            )
           ],
           child: MaterialApp(
             title: 'Rapid Health',
@@ -110,6 +116,7 @@ class _MyAppState extends State<MyApp> {
                     child: const RegistrationPage(),
                   ),
               "newPost": (ctx) => const PostEditor(),
+              "bookings": (ctx) => const BookingsPage(),
             },
             initialRoute: newUser ? "login" : "home",
           ),

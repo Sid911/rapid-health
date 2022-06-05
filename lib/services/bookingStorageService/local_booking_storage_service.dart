@@ -29,15 +29,18 @@ class LocalBookingService extends BookingServiceInterface {
     final List<BookingData> _list = List.empty(growable: true);
     List<String> bookingHashes = List.empty();
     if (uUID.isDoctor) {
-      if (LocalServer.docBookings.containsKey(uUID.id))
+      if (LocalServer.docBookings.containsKey(uUID.id)) {
         bookingHashes = getDoctorBookings(uUID.id)!.bookingUIDs;
+      }
     } else {
-      if (LocalServer.userBookings.containsKey(uUID.id))
+      if (LocalServer.userBookings.containsKey(uUID.id)) {
         bookingHashes = getPatientBookings(uUID.id)!.bookingUIDs;
+      }
     }
     for (String hash in bookingHashes) {
-      if (LocalServer.bookingsBox.containsKey(hash))
+      if (LocalServer.bookingsBox.containsKey(hash)) {
         _list.add(LocalServer.bookingsBox.get(hash)!);
+      }
     }
     return _list;
   }

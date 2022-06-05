@@ -23,13 +23,14 @@ class BookingDataAdapter extends TypeAdapter<BookingData> {
       bookingDate: fields[3] as DateTime,
       isValid: fields[4] as bool,
       postUID: fields[5] as String,
+      time: fields[6] as TimeOfDay,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookingData obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.patientUID)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class BookingDataAdapter extends TypeAdapter<BookingData> {
       ..writeByte(4)
       ..write(obj.isValid)
       ..writeByte(5)
-      ..write(obj.postUID);
+      ..write(obj.postUID)
+      ..writeByte(6)
+      ..write(obj.time);
   }
 
   @override

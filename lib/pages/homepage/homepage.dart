@@ -22,6 +22,9 @@ class _HomepageState extends State<Homepage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late SettingsService settings;
+
+  bool rebuildBookings = true;
+
   @override
   void initState() {
     super.initState();
@@ -140,7 +143,10 @@ class _HomepageState extends State<Homepage>
                   style: theme.textTheme.headline4,
                 ),
               ),
-              const NotFoundWrapper(text: "No recent chats"),
+              const NotFoundWrapper(
+                text: "No recent chats",
+                height: 200,
+              ),
             ],
           ),
         ),

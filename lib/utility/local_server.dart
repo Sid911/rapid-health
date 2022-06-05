@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:logger/logger.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/services/bookingStorageService/booking_data.dart';
@@ -49,6 +50,8 @@ class LocalServer {
     Hive.registerAdapter(ReviewDataAdapter());
     Hive.registerAdapter(ReviewsAdapter());
 
+    Hive.registerAdapter(BookingDataAdapter());
+    Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(PatientBookingsAdapter());
     Hive.registerAdapter(DoctorBookingsAdapter());
 
@@ -59,8 +62,13 @@ class LocalServer {
     postsBox = await Hive.openBox("posts");
     postDataBox = await Hive.openBox("postData");
     reviewsBox = await Hive.openBox("reviews");
+    bookingsBox = await Hive.openBox("bookings");
     userBookings = await Hive.openBox("userBookings");
     docBookings = await Hive.openBox("docBookings");
+
+    // bookingsBox.clear();
+    // userBookings.clear();
+    // docBookings.clear();
     // postsBox.clear();
     // postDataBox.clear();
 
@@ -224,26 +232,34 @@ class LocalServer {
 
   static Future<void> addBooking(String userUID, BookingData data) async {
     final randomKey = sha1RandomString();
-    bookingsBox.put(randomKey, data);
+    bookingsBox.put(randomKey, data.copyWith(key: randomKey));
+    _logger.i("Adding bookingData to Box with key $randomKey");
     // sync with each party's indexes
     // doctor sync
     DoctorBookings docObj;
     if (!docBookings.containsKey(data.doctorUID)) {
       // if doctor doesn't have an index yet make and index
       docObj = DoctorBookings(data.doctorUID, [randomKey]);
+      _logger.i("Doctor is new!");
     } else {
       docObj = docBookings.get(data.doctorUID)!;
       docObj.bookingUIDs.add(randomKey);
+      _logger.i(
+          "Doctor is old! CurrentObject has ${docObj.bookingUIDs.length} ids");
     }
     docBookings.put(docObj.doctorUID, docObj);
     // user sync
     PatientBookings userObj;
     if (!userBookings.containsKey(data.patientUID)) {
       userObj = PatientBookings(data.patientUID, [randomKey]);
+      _logger.i("User is new!");
     } else {
       userObj = userBookings.get(data.patientUID)!;
       userObj.bookingUIDs.add(randomKey);
+      _logger.i(
+          "User is old! CurrentObject has ${userObj.bookingUIDs.length} ids");
     }
+    userBookings.put(userObj.patientUID, userObj);
   }
 
   /// endregion

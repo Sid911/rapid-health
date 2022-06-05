@@ -44,7 +44,6 @@ class _PostViewPageState extends State<PostViewPage> {
   late PostsServiceInterface postsService;
   late AuthServiceInterface authService;
   late PostPreview preview;
-
   @override
   void initState() {
     super.initState();
@@ -62,32 +61,44 @@ class _PostViewPageState extends State<PostViewPage> {
         backgroundColor: theme.scaffoldBackgroundColor,
         title: const Text("Post Details"),
       ),
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BookingEditorPage(),
+      floatingActionButton: FutureBuilder<PostData?>(
+        future: postsService.getPostData(preview.postDataHash),
+        builder: (context, snap) {
+          if (!snap.hasData) {
+            return Container();
+          }
+          return GestureDetector(
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return BookingEditorPage(data: snap.data!);
+                  },
+                ),
+              );
+            },
+            child: GlowContainer(
+              borderRadius: BorderRadius.circular(10),
+              color: darkMode
+                  ? Colors.blueGrey.shade600
+                  : Colors.blueGrey.shade200,
+              padding: const EdgeInsets.all(15),
+              glowColor: Colors.lightBlueAccent,
+              spreadRadius: -10,
+              offset: const Offset(0, 10),
+              blurRadius: 20,
+              width: 150,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Book Service"),
+                  Icon(FlutterRemix.health_book_line),
+                ],
+              ),
             ),
           );
         },
-        child: GlowContainer(
-          borderRadius: BorderRadius.circular(10),
-          color: darkMode ? Colors.blueGrey.shade600 : Colors.blueGrey.shade200,
-          padding: const EdgeInsets.all(15),
-          glowColor: Colors.lightBlueAccent,
-          spreadRadius: -10,
-          offset: const Offset(0, 10),
-          blurRadius: 20,
-          width: 150,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text("Book Service"),
-              Icon(FlutterRemix.health_book_line),
-            ],
-          ),
-        ),
       ),
       body: SafeArea(
         child: Padding(
