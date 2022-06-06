@@ -13,6 +13,7 @@ import 'package:rapid_health/interfaces/booking_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
 import 'package:rapid_health/pages/bookings/bookings.dart';
+import 'package:rapid_health/pages/chat/chat_page.dart';
 import 'package:rapid_health/pages/homepage/homepage.dart';
 import 'package:rapid_health/pages/login/login_page.dart';
 import 'package:rapid_health/pages/post_editor/post_editor.dart';
@@ -92,7 +93,8 @@ class _MyAppState extends State<MyApp> {
             Provider<PostsServiceInterface>(create: (_) => LocalPostsService()),
             Provider<BookingServiceInterface>(
               create: (_) => LocalBookingService(),
-            )
+            ),
+            Provider<ChatServiceInterface>(create: (_) => LocalChatService()),
           ],
           child: MaterialApp(
             title: 'Rapid Health',
@@ -117,6 +119,7 @@ class _MyAppState extends State<MyApp> {
                   ),
               "newPost": (ctx) => const PostEditor(),
               "bookings": (ctx) => const BookingsPage(),
+              "chats": (ctx) => const ChatPage(),
             },
             initialRoute: newUser ? "login" : "home",
           ),

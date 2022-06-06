@@ -33,6 +33,7 @@ abstract class AuthServiceInterface {
 
   Future<DoctorData?> getDoctorData(String uid);
   Future<PatientData?> getPatientData(String uid);
+  Future<UserData?> getUserData(UserUID uid);
 }
 
 enum LoginError {

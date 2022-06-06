@@ -35,11 +35,11 @@ class AuthorCard extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: CircleAvatar(
                   radius: 30,
+                  backgroundColor: theme.scaffoldBackgroundColor,
                   child: Text(
                     initials,
                     style: theme.textTheme.headline4,
                   ),
-                  backgroundColor: theme.scaffoldBackgroundColor,
                 ),
               ),
               Container(
@@ -59,7 +59,17 @@ class AuthorCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showBottomSheet(
+                    context: context,
+                    builder: (ctx) {
+                      return Container(
+                        height: 200,
+                        color: theme.scaffoldBackgroundColor,
+                      );
+                    },
+                  );
+                },
                 icon: const Icon(
                   FlutterRemix.more_2_line,
                 ),

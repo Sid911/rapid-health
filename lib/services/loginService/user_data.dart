@@ -75,7 +75,7 @@ class PatientData extends UserData {
 
   @override
   // Simple patient addon for the uid
-  String get uid => "patient:" + email;
+  String get uid => "patient:$email";
 
   PatientData copyWith({
     String? name,
@@ -148,7 +148,7 @@ class DoctorData extends UserData {
 
   @override
   // Simple doctor addon for uid
-  String get uid => "doctor:" + email;
+  String get uid => "doctor:$email";
 
   DoctorData copyWith({
     String? name,

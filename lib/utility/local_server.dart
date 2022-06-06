@@ -8,6 +8,7 @@ import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/services/reviewStorageService/review_data.dart';
 import 'package:rapid_health/utility/randomString.dart';
+import 'package:rapid_health/utility/user.dart';
 
 import 'doctor_categories.dart';
 
@@ -231,7 +232,9 @@ class LocalServer {
   /// region Booking Service
 
   static Future<void> addBooking(String userUID, BookingData data) async {
-    final randomKey = sha1RandomString();
+    // Use the time now to add to Hive box
+    // This causes the keys to stay in relevant order and allow to query for time
+    final randomKey = DateTime.now().toIso8601String();
     bookingsBox.put(randomKey, data.copyWith(key: randomKey));
     _logger.i("Adding bookingData to Box with key $randomKey");
     // sync with each party's indexes
@@ -263,4 +266,70 @@ class LocalServer {
   }
 
   /// endregion
+  /// region Chat Service
+
+  static Future<void> addNewConversation(
+    ChatData initialData,
+  ) async {
+    // check if the sender has any chat index
+    if (!chatsBox.containsKey(initialData.originID)) {
+      // create a new index
+      await chatsBox.put(
+        initialData.originID,
+        Chat([], initialData.originID),
+      );
+    }
+    if (!chatsBox.containsKey(initialData.targetID)) {
+      await chatsBox.put(
+        initialData.targetID,
+        Chat([], initialData.targetID),
+      );
+    }
+  }
+
+  static Future<void> updatePreviews(ChatData data) async {
+    final originChat = chatsBox.get(data.originID)!;
+    originChat.chats.add(data.toChatPreview(false));
+    await chatsBox.put(data.originID, originChat);
+
+    final targetChat = chatsBox.get(data.targetID)!;
+    targetChat.chats.add(data.toChatPreview(true));
+    await chatsBox.put(data.targetID, targetChat);
+  }
+
+  static Future<void> addMessage(
+    ChatMessage message,
+    String? conversationHash,
+  ) async {
+    final randomKey = sha1RandomString();
+    ChatData data;
+    if (conversationHash == null) {
+      // new conversation
+      data = ChatData(
+        message.receiverID,
+        message.senderID,
+        randomKey,
+        [message],
+      );
+      await addNewConversation(data);
+    } else if (!conversationBox.containsKey(conversationHash)) {
+      _logger.wtf(
+        "The conversation hash $conversationHash doesn't exist in the box"
+        "\nCreating new conversation with same hash as key",
+      );
+      data = ChatData(
+        message.receiverID,
+        message.senderID,
+        conversationHash,
+        [message],
+      );
+      await addNewConversation(data);
+    } else {
+      data = conversationBox.get(conversationHash)!;
+    }
+    // retrieve index
+    await updatePreviews(data);
+
+    await conversationBox.put(data.hashKey, data);
+  }
 }

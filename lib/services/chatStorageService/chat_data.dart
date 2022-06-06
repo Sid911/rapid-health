@@ -26,6 +26,16 @@ class ChatData {
   final String hashKey;
   @HiveField(3)
   final List<ChatMessage> messages;
+
+  ChatPreview toChatPreview(bool originIsTarget) {
+    final preview = ChatPreview(
+      originIsTarget ? originID : targetID,
+      hashKey,
+      messages.last.data,
+      messages.last.messageSent,
+    );
+    return preview;
+  }
 }
 
 @HiveType(typeId: 6, adapterName: "ChatPreviewAdapter")

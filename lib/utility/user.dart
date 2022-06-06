@@ -29,4 +29,9 @@ class UserUID {
     isDoctor = list.first == "doctor";
     id = list.last;
   }
+
+  @override
+  String toString() {
+    return "${isDoctor ? "doctor" : "patient"}:$id";
+  }
 }

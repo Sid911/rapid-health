@@ -87,4 +87,11 @@ class LocalAuthService extends AuthServiceInterface {
 
   @override
   User? get currentUser => _currentUser;
+
+  @override
+  Future<UserData?> getUserData(UserUID uid) async {
+    return uid.isDoctor
+        ? await getDoctorData(uid.id)
+        : await getPatientData(uid.id);
+  }
 }

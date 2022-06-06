@@ -143,7 +143,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.popAndPushNamed(context, "chat");
+                    Navigator.popAndPushNamed(context, "chats");
                   },
                   child: Text(
                     " - Chat",
