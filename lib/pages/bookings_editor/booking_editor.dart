@@ -136,7 +136,7 @@ class _BookingEditorPageState extends State<BookingEditorPage> {
                           )
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

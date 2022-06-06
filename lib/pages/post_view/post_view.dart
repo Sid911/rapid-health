@@ -173,8 +173,7 @@ class _PostViewPageState extends State<PostViewPage> {
                           future: authService.getDoctorData(data.authorUID),
                           builder: (context, snap) {
                             if (snap.hasData && snap.data != null) {
-                              return AuthorCard(
-                                  userData: snap.data!, isDoctor: true);
+                              return AuthorCard(user: snap.data!.toUser());
                             }
                             return const LoadingWrapper();
                           },

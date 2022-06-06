@@ -1,5 +1,6 @@
 import 'package:hive_flutter/adapters.dart';
 import 'package:rapid_health/utility/doctor_categories.dart';
+import 'package:rapid_health/utility/user.dart';
 
 part 'user_data.g.dart';
 
@@ -176,5 +177,9 @@ class DoctorData extends UserData {
       website: website ?? this.website,
       category: category ?? this.category,
     );
+  }
+
+  User toUser() {
+    return User(userData: this, isUserDoctor: true);
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/src/foundation/change_notifier.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/utility/local_server.dart';
@@ -27,8 +29,15 @@ class LocalChatService extends ChatServiceInterface {
   }
 
   @override
-  Future<void> deleteConversation(String conversationHash) {
+  Future<void> deleteConversation(String conversationHash) async {
     // TODO: implement deleteConversation
     throw UnimplementedError();
+  }
+
+  @override
+  ValueListenable<Box<ChatData>> getConversationListenable(
+    String conversationHash,
+  ) {
+    return LocalServer.conversationBox.listenable(keys: [conversationHash]);
   }
 }

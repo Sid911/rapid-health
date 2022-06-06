@@ -25,6 +25,7 @@ class ChatPreviewWidget extends StatelessWidget {
             builder: (_) => ConversationPage(
               data: data,
               uUID: targetUUID,
+              preview: preview,
             ),
           ),
         );

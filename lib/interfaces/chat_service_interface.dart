@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/utility/user.dart';
 
@@ -17,4 +18,9 @@ abstract class ChatServiceInterface {
 
   ///
   Future<void> deleteConversation(String conversationHash);
+
+  ///
+  ValueListenable<Object> getConversationListenable(
+    String conversationHash,
+  );
 }

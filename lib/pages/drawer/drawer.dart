@@ -72,11 +72,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ),
                       child: CircleAvatar(
                         radius: 40,
+                        backgroundColor: theme.primaryColor,
                         child: Text(
                           initials,
                           style: theme.textTheme.headline4,
                         ),
-                        backgroundColor: theme.primaryColor,
                       ),
                     ),
                     Padding(
@@ -86,7 +86,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           text: currentUser.name,
                           children: [
                             TextSpan(
-                              text: '\n' + currentUser.email,
+                              text: '\n${currentUser.email}',
                               style: const TextStyle(fontSize: 12),
                             )
                           ],

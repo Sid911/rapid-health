@@ -6,6 +6,7 @@ import 'package:rapid_health/global/not_found_wrapper.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/pages/chat/chat_preview_widget.dart';
+import 'package:rapid_health/pages/chat/new_chat.dart';
 import 'package:rapid_health/services/chatStorageService/chat_data.dart';
 import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/utility/user.dart';
@@ -42,11 +43,22 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: theme.primaryColor,
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const NewChatPage()),
+          );
+        },
         label: Row(
           children: const [
-            Icon(FlutterRemix.add_line),
-            Text("New Conversation"),
+            Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Icon(FlutterRemix.add_line),
+            ),
+            Text(
+              "New",
+              style: TextStyle(fontSize: 12),
+            ),
           ],
         ),
       ),
@@ -58,6 +70,11 @@ class _ChatPageState extends State<ChatPage> {
             builder: (context, snap) {
               if (snap.hasData) {
                 final data = snap.data!;
+                if (data.isEmpty) {
+                  return const NotFoundWrapper(
+                    text: "No Chats Found",
+                  );
+                }
                 return ListView.separated(
                   itemCount: data.length,
                   itemBuilder: (ctx, index) {
@@ -76,7 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                   },
                 );
               }
-              return const NotFoundWrapper(text: "No Chats Found");
+              return const LoadingWrapper();
             },
           ),
         ),

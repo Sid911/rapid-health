@@ -12,6 +12,7 @@ import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/interfaces/booking_service_interface.dart';
 import 'package:rapid_health/interfaces/chat_service_interface.dart';
 import 'package:rapid_health/interfaces/posts_service_interface.dart';
+import 'package:rapid_health/interfaces/search_service_interface.dart';
 import 'package:rapid_health/pages/bookings/bookings.dart';
 import 'package:rapid_health/pages/chat/chat_page.dart';
 import 'package:rapid_health/pages/homepage/homepage.dart';
@@ -23,6 +24,7 @@ import 'package:rapid_health/services/bookingStorageService/local_booking_storag
 import 'package:rapid_health/services/chatStorageService/local_chat_service_impl.dart';
 import 'package:rapid_health/services/loginService/local_auth_service_impl.dart';
 import 'package:rapid_health/services/postStorageService/local_posts_service_impl.dart';
+import 'package:rapid_health/services/searchService/local_search_service_impl.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
 import 'package:rapid_health/utility/custom_colors.dart';
 import 'package:rapid_health/utility/local_server.dart';
@@ -91,6 +93,9 @@ class _MyAppState extends State<MyApp> {
             Provider<AuthServiceInterface>(create: (_) => authService),
             Provider<ChatServiceInterface>(create: (_) => LocalChatService()),
             Provider<PostsServiceInterface>(create: (_) => LocalPostsService()),
+            Provider<SearchServiceInterface>(
+              create: (_) => LocalSearchService(),
+            ),
             Provider<BookingServiceInterface>(
               create: (_) => LocalBookingService(),
             ),
