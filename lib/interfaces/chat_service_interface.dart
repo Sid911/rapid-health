@@ -8,10 +8,13 @@ abstract class ChatServiceInterface {
   Future<List<ChatPreview>> getChatPreviews(UserUID uUID);
 
   ///
+  Future<ChatPreview?> getChatPreview(UserUID user, UserUID target);
+
+  ///
   Future<ChatData?> loadChatData(String conversationHash);
 
   ///
-  Future<void> addMessage(
+  Future<String> addMessage(
     ChatMessage message, {
     String? conversationHash,
   });
@@ -20,7 +23,7 @@ abstract class ChatServiceInterface {
   Future<void> deleteConversation(String conversationHash);
 
   ///
-  ValueListenable<Object> getConversationListenable(
+  Future<ValueListenable<Object>?> getConversationListenable(
     String conversationHash,
   );
 }

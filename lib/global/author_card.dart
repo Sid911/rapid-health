@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:rapid_health/global/doctor_details_widget.dart';
+import 'package:rapid_health/global/patient_details.dart';
+import 'package:rapid_health/pages/chat/conversation_page.dart';
+import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/utility/user.dart';
 
 class AuthorCard extends StatelessWidget {
@@ -19,6 +23,8 @@ class AuthorCard extends StatelessWidget {
     ),
   );
 
+  bool get isDoc => user.isUserDoctor;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -28,13 +34,13 @@ class AuthorCard extends StatelessWidget {
     for (String s in user.userData.name.split(" ")) {
       initials += s[0];
     }
-    final avatarColor = user.isUserDoctor
+    final avatarColor = isDoc
         ? darkMode
             ? Colors.blueGrey.shade900
             : Colors.blueGrey.shade50
         : theme.scaffoldBackgroundColor;
 
-    final background = (user.isUserDoctor
+    final background = (isDoc
         ? darkMode
             ? Colors.blueGrey.shade700
             : Colors.blueGrey.shade200
@@ -74,7 +80,7 @@ class AuthorCard extends StatelessWidget {
                           style: theme.textTheme.bodyText1,
                         ),
                         Text(
-                          user.userData.name,
+                          user.userData.email,
                           style: theme.textTheme.subtitle2,
                         ),
                       ],
@@ -87,7 +93,17 @@ class AuthorCard extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(right: 8.0),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ConversationPage(
+                              data: user.userData,
+                              uUID: user.parsedUID,
+                            ),
+                          ),
+                        );
+                      },
                       icon: const Icon(FlutterRemix.message_3_line),
                     ),
                   ),
@@ -103,6 +119,13 @@ class AuthorCard extends StatelessWidget {
                               color: avatarColor,
                               borderRadius: borderRadii.borderRadius,
                             ),
+                            child: isDoc
+                                ? DoctorDetails(
+                                    data: user.userData as DoctorData,
+                                  )
+                                : PatientDetails(
+                                    data: user.userData as PatientData,
+                                  ),
                           );
                         },
                       );

@@ -21,11 +21,11 @@ class LocalChatService extends ChatServiceInterface {
   }
 
   @override
-  Future<void> addMessage(
+  Future<String> addMessage(
     ChatMessage message, {
     String? conversationHash,
   }) async {
-    await LocalServer.addMessage(message, conversationHash);
+    return await LocalServer.addMessage(message, conversationHash);
   }
 
   @override
@@ -35,9 +35,25 @@ class LocalChatService extends ChatServiceInterface {
   }
 
   @override
-  ValueListenable<Box<ChatData>> getConversationListenable(
+  Future<ValueListenable<Box<ChatData>>?> getConversationListenable(
     String conversationHash,
-  ) {
+  ) async {
+    if (!LocalServer.conversationBox.containsKey(conversationHash)) {
+      return null;
+    }
     return LocalServer.conversationBox.listenable(keys: [conversationHash]);
+  }
+
+  @override
+  Future<ChatPreview?> getChatPreview(UserUID user, UserUID target) async {
+    if (LocalServer.chatsBox.containsKey(user.toString())) {
+      final chats = LocalServer.chatsBox.get(user.toString())!;
+      for (final chat in chats.chats) {
+        if (chat.targetUID == target.toString()) {
+          return chat;
+        }
+      }
+    }
+    return null;
   }
 }

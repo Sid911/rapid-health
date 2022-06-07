@@ -45,6 +45,7 @@ class _RegistrationCardState extends State<RegistrationCard> {
               },
             ),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.name,
               style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(
@@ -62,6 +63,7 @@ class _RegistrationCardState extends State<RegistrationCard> {
               },
             ),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(
@@ -79,6 +81,7 @@ class _RegistrationCardState extends State<RegistrationCard> {
               },
             ),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.visiblePassword,
               style: theme.textTheme.bodyText1,
               obscureText: true,
@@ -97,6 +100,7 @@ class _RegistrationCardState extends State<RegistrationCard> {
               },
             ),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.phone,
               style: theme.textTheme.bodyText1,
               decoration: const InputDecoration(

@@ -17,6 +17,24 @@ class ChatPreviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final darkMode = theme.brightness == Brightness.dark;
+    final avatarColor = targetUUID.isDoctor
+        ? darkMode
+            ? Colors.blueGrey.shade900
+            : Colors.blueGrey.shade50
+        : theme.scaffoldBackgroundColor;
+
+    final background = (targetUUID.isDoctor
+        ? darkMode
+            ? Colors.blueGrey.shade800
+            : Colors.blueGrey.shade100
+        : theme.primaryColor);
+
+    String initials = "";
+    for (String s in data.name.split(" ")) {
+      initials += s[0];
+    }
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -25,19 +43,55 @@ class ChatPreviewWidget extends StatelessWidget {
             builder: (_) => ConversationPage(
               data: data,
               uUID: targetUUID,
-              preview: preview,
+              hash: preview.chatHash,
             ),
           ),
         );
       },
       child: Container(
         padding: const EdgeInsets.all(10),
-        height: 70,
+        height: 80,
         decoration: BoxDecoration(
-          color: targetUUID.isDoctor
-              ? theme.scaffoldBackgroundColor
-              : Colors.blueGrey.shade900,
-          borderRadius: BorderRadius.circular(15),
+          color: background,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: avatarColor,
+                    child: Text(
+                      initials,
+                      style: theme.textTheme.headline5,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.name,
+                        style: theme.textTheme.bodyText1,
+                      ),
+                      Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        preview.lastMessage,
+                        style: theme.textTheme.subtitle2,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
@@ -148,8 +146,11 @@ class BookingTile extends StatelessWidget {
         return FadeTransition(
           opacity: animation,
           child: ListTile(
+            onTap: () {
+              Navigator.pushNamed(context, "bookings");
+            },
             title: Text(
-              snap.hasData ? data!.title : "Tittle of the Appointment",
+              snap.hasData ? data!.title : "Title of the Appointment",
               style: theme.textTheme.bodyText1,
             ),
             subtitle: Container(

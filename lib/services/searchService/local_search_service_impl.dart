@@ -1,6 +1,7 @@
 import 'package:rapid_health/interfaces/search_service_interface.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/utility/coordinate.dart';
+import 'package:rapid_health/utility/doctor_categories.dart';
 import 'package:rapid_health/utility/user.dart';
 
 import '../../utility/local_server.dart';
@@ -9,7 +10,8 @@ class LocalSearchService extends SearchServiceInterface {
   @override
   Future<List<PostData>> searchPosts(
     String term,
-    Coordinate location, [
+    Coordinate location,
+    DoctorCategory? category, [
     bool ascending = true,
     int totalResults = 5,
   ]) async {
@@ -23,8 +25,15 @@ class LocalSearchService extends SearchServiceInterface {
       if (val.description.contains(regTerm) ||
           val.title.contains(regTerm) ||
           val.subtitle.contains(regTerm)) {
-        resultList.add(val);
-        index++;
+        if (category != null) {
+          if (category == val.postCategory) {
+            resultList.add(val);
+            index++;
+          }
+        } else {
+          resultList.add(val);
+          index++;
+        }
       }
     }
     return resultList;

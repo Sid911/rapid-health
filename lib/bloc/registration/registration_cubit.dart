@@ -45,36 +45,46 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     LoginError error = LoginError.unknown;
     if (state is RegistrationPatient) {
       final p = state as RegistrationPatient;
-      error = await authService.registerPatient(
-        PatientData(
-          name: p.name,
-          password: p.password,
-          email: p.email,
-          accountCreationDate: DateTime.now(),
-          lastLoggedIn: DateTime.now(),
-          phone: p.phone,
-          address: p.address,
-          age: p.age,
-          birthdate: p.birthDate,
-        ),
-      );
+      if (p.name.length > 3 ||
+          p.email.length > 5 ||
+          p.address.length > 10 ||
+          p.phone.length == 10) {
+        error = await authService.registerPatient(
+          PatientData(
+            name: p.name,
+            password: p.password,
+            email: p.email,
+            accountCreationDate: DateTime.now(),
+            lastLoggedIn: DateTime.now(),
+            phone: p.phone,
+            address: p.address,
+            age: p.age,
+            birthdate: p.birthDate,
+          ),
+        );
+      }
     } else if (state is RegistrationDoctor) {
       final d = state as RegistrationDoctor;
-      error = await authService.registerDoctor(
-        DoctorData(
-          name: d.name,
-          password: d.password,
-          email: d.email,
-          accountCreationDate: DateTime.now(),
-          lastLoggedIn: DateTime.now(),
-          phone: d.phone,
-          workAddress: d.workAddress,
-          workPhone: d.workPhone,
-          coordinates: d.coordinates,
-          website: d.website,
-          category: d.category,
-        ),
-      );
+      if (d.name.length > 3 ||
+          d.email.length > 5 ||
+          d.workAddress.length > 10 ||
+          d.phone.length == 10) {
+        error = await authService.registerDoctor(
+          DoctorData(
+            name: d.name,
+            password: d.password,
+            email: d.email,
+            accountCreationDate: DateTime.now(),
+            lastLoggedIn: DateTime.now(),
+            phone: d.phone,
+            workAddress: d.workAddress,
+            workPhone: d.workPhone,
+            coordinates: d.coordinates,
+            website: d.website,
+            category: d.category,
+          ),
+        );
+      }
     }
     return error;
   }

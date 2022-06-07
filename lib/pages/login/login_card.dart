@@ -78,6 +78,7 @@ class _LoginCardState extends State<LoginCard> {
                 child: Column(
                   children: [
                     TextFormField(
+                      textInputAction: TextInputAction.next,
                       controller: widget._emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: theme.textTheme.bodyText1,
@@ -97,6 +98,7 @@ class _LoginCardState extends State<LoginCard> {
                     Container(
                       margin: const EdgeInsets.only(top: 20),
                       child: TextFormField(
+                        textInputAction: TextInputAction.done,
                         controller: widget._passwordController,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,

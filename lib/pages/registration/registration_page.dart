@@ -95,6 +95,7 @@ class _RegistrationPageState extends State<RegistrationPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("User Registered !")));
                 }
+                Navigator.pop(context);
               },
               child: GlowIcon(
                 FlutterRemix.arrow_right_s_line,

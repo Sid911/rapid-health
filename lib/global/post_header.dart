@@ -75,7 +75,6 @@ class PostHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const Divider(),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 15, horizontal: 5),

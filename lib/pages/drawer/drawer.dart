@@ -177,17 +177,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ),
                       )
                     : Container(),
-                TextButton.icon(
-                  label: Text(
-                    "Settings",
-                    style: TextStyle(color: theme.textTheme.subtitle1?.color),
-                  ),
-                  onPressed: () {},
-                  icon: Icon(
-                    FlutterRemix.settings_6_fill,
-                    color: theme.textTheme.subtitle1?.color,
-                  ),
-                )
               ],
             ),
           ],

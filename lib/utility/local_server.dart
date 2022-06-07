@@ -8,7 +8,6 @@ import 'package:rapid_health/services/loginService/user_data.dart';
 import 'package:rapid_health/services/postStorageService/post_data.dart';
 import 'package:rapid_health/services/reviewStorageService/review_data.dart';
 import 'package:rapid_health/utility/randomString.dart';
-import 'package:rapid_health/utility/user.dart';
 
 import 'doctor_categories.dart';
 
@@ -41,6 +40,7 @@ class LocalServer {
     Hive.registerAdapter(DoctorCategoriesAdapter());
     // Chat based adapter
     Hive.registerAdapter(ChatAdapter());
+    Hive.registerAdapter(ChatMessageAdapter());
     Hive.registerAdapter(ChatDataAdapter());
     Hive.registerAdapter(ChatPreviewAdapter());
     // Post and review based Adapter
@@ -67,6 +67,8 @@ class LocalServer {
     userBookings = await Hive.openBox("userBookings");
     docBookings = await Hive.openBox("docBookings");
 
+    // chatsBox.clear();
+    // conversationBox.clear();
     // bookingsBox.clear();
     // userBookings.clear();
     // docBookings.clear();
@@ -80,9 +82,9 @@ class LocalServer {
   static Future<void> generateDummyData() async {
     final now = DateTime.now();
     final sid = PatientData(
-      name: 'Siddharth Sinha',
-      password: "1a2b3c4d5e",
-      email: "siddevs@outlook.com",
+      name: 'Guest Patient',
+      password: "guest",
+      email: "guestpatient@dev.com",
       accountCreationDate: now,
       lastLoggedIn: now,
       phone: "0123456789",
@@ -91,9 +93,9 @@ class LocalServer {
       birthdate: DateTime(2002, 11, 24),
     );
     final sidDoc = DoctorData(
-      name: "Siddharth Sinha",
+      name: "Dr. Guest",
       password: "0123456789",
-      email: "siddharthsinha9752@gmail.com",
+      email: "guestdoctor@dev.com",
       accountCreationDate: now,
       lastLoggedIn: now,
       phone: "9876543210",
@@ -120,17 +122,57 @@ class LocalServer {
       address: "Middle of nowhere, Ladakh, JK, India",
       postHash: "averyrandomhash",
     );
-    if (!postsBox.containsKey("siddharthsinha9752@gmail.com")) {
-      addPost("siddharthsinha9752@gmail.com", examplePost);
+
+    final List<ChatMessage> randomMessages = [
+      ChatMessage(
+        sid.uid,
+        sidDoc.uid,
+        now,
+        "Hi Guest Doc, a huge coincidence on our name huh?",
+      ),
+      ChatMessage(
+        sid.uid,
+        sidDoc.uid,
+        now,
+        "I was just thinking about sending this after seeing your name",
+      ),
+      ChatMessage(
+        sidDoc.uid,
+        sid.uid,
+        now,
+        "HI, random \"random guest\" from the internet, nice to know you people"
+        "still exist in this world",
+      ),
+      ChatMessage(
+        sidDoc.uid,
+        sid.uid,
+        now,
+        "Humpty Dumpty was a common “nickname”, used in 15th century England, to describe large people. "
+        "This had led to many ideas as to who, or what, the Humpty Dumpty in the nursery rhyme really was. "
+        "The idea that ‘Humpty Dumpty’ was a powerful cannon, "
+        "used during the English Civil War (1642-49), is one of the ideas taken most seriously.",
+      ),
+    ];
+
+    const hash = "myRandomHash";
+    if (!conversationBox.containsKey(hash)) {
+      addMessage(randomMessages[0], hash);
+      addMessage(randomMessages[1], hash);
+      addMessage(randomMessages[2], hash);
+      addMessage(randomMessages[3], hash);
+    }
+
+    if (!postsBox.containsKey("guestdoctor@dev.com")) {
+      addPost("guestdoctor@dev.com", examplePost);
     }
     // Add dummy data for testing
     // patientBox.clear();
     // doctorsBox.clear();
-    if (!patientBox.containsKey("siddevs@outlook.com")) {
-      patientBox.put("siddevs@outlook.com", sid);
+    if (!patientBox.containsKey("guestpatient@dev.com")) {
+      patientBox.put("guestpatient@dev.com", sid);
     }
-    if (!doctorsBox.containsKey("siddharthsinha9752@gmail.com")) {
-      doctorsBox.put("siddharthsinha9752@gmail.com", sidDoc);
+    if (!doctorsBox.containsKey("guestdoctor@dev.com")) {
+      doctorsBox.put("guestdoctor@dev.com", sidDoc);
     }
   }
 
@@ -289,15 +331,17 @@ class LocalServer {
 
   static Future<void> updatePreviews(ChatData data) async {
     final originChat = chatsBox.get(data.originID)!;
+    originChat.chats.removeWhere((element) => element.chatHash == data.hashKey);
     originChat.chats.add(data.toChatPreview(false));
     await chatsBox.put(data.originID, originChat);
 
     final targetChat = chatsBox.get(data.targetID)!;
+    targetChat.chats.removeWhere((element) => element.chatHash == data.hashKey);
     targetChat.chats.add(data.toChatPreview(true));
     await chatsBox.put(data.targetID, targetChat);
   }
 
-  static Future<void> addMessage(
+  static Future<String> addMessage(
     ChatMessage message,
     String? conversationHash,
   ) async {
@@ -305,6 +349,7 @@ class LocalServer {
     ChatData data;
     if (conversationHash == null) {
       // new conversation
+      _logger.i("Making a new Conversation with key : $randomKey");
       data = ChatData(
         message.receiverID,
         message.senderID,
@@ -325,11 +370,14 @@ class LocalServer {
       );
       await addNewConversation(data);
     } else {
+      _logger.i("Conversation $conversationHash exists! adding message to it");
       data = conversationBox.get(conversationHash)!;
+      data.messages.add(message);
     }
     // retrieve index
     await updatePreviews(data);
 
     await conversationBox.put(data.hashKey, data);
+    return data.hashKey;
   }
 }

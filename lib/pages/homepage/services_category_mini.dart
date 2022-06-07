@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:rapid_health/pages/search/search_page.dart';
+import 'package:rapid_health/utility/doctor_categories.dart';
 
 class ServicesCategoryMini extends StatelessWidget {
   const ServicesCategoryMini({Key? key}) : super(key: key);
@@ -15,107 +17,167 @@ class ServicesCategoryMini extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: theme.primaryColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: const Text("Dn"),
-                  backgroundColor: theme.primaryColor,
-                ),
-                const Text("Dentist")
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: darkMode
-                  ? Colors.blueGrey.shade600
-                  : Colors.blueGrey.shade200,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Center(
-                    child: Icon(
-                      darkMode
-                          ? FlutterRemix.heart_pulse_line
-                          : FlutterRemix.heart_pulse_fill,
-                      color: theme.textTheme.bodyText1?.color,
-                      size: 30,
-                    ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    docPref: DoctorCategory.dentist,
                   ),
                 ),
-                const Text("Emergency")
-              ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: theme.primaryColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: theme.primaryColor,
+                    child: const Text("Dn"),
+                  ),
+                  const Text("Dentist")
+                ],
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: theme.primaryColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: const Text("Gy"),
-                  backgroundColor: theme.primaryColor,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    docPref: DoctorCategory.emergency,
+                  ),
                 ),
-                const Text("Gynecologist")
-              ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: darkMode
+                    ? Colors.blueGrey.shade600
+                    : Colors.blueGrey.shade200,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Center(
+                      child: Icon(
+                        darkMode
+                            ? FlutterRemix.heart_pulse_line
+                            : FlutterRemix.heart_pulse_fill,
+                        color: theme.textTheme.bodyText1?.color,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  const Text("Emergency")
+                ],
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: theme.primaryColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: const Text("Ph"),
-                  backgroundColor: theme.primaryColor,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    docPref: DoctorCategory.gynecologist,
+                  ),
                 ),
-                const Text("Physician")
-              ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: theme.primaryColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: theme.primaryColor,
+                    child: const Text("Gy"),
+                  ),
+                  const Text("Gynecologist")
+                ],
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: theme.primaryColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: const Text("Or"),
-                  backgroundColor: theme.primaryColor,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    docPref: DoctorCategory.physician,
+                  ),
                 ),
-                const Text("Orthopaedic")
-              ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: theme.primaryColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: theme.primaryColor,
+                    child: const Text("Ph"),
+                  ),
+                  const Text("Physician")
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    docPref: DoctorCategory.orthopaedic,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: theme.primaryColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: theme.primaryColor,
+                    child: const Text("Or"),
+                  ),
+                  const Text("Orthopaedic")
+                ],
+              ),
             ),
           ),
         ],

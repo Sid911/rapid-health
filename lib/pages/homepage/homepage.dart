@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:rapid_health/global/logo_mini.dart';
-import 'package:rapid_health/global/not_found_wrapper.dart';
 import 'package:rapid_health/interfaces/auth_service_interface.dart';
 import 'package:rapid_health/pages/drawer/drawer.dart';
+import 'package:rapid_health/pages/homepage/recent_chats_mini.dart';
 import 'package:rapid_health/pages/homepage/services_category_mini.dart';
 import 'package:rapid_health/pages/search/search_page.dart';
 import 'package:rapid_health/services/settingsService/settings_service.dart';
@@ -143,10 +143,7 @@ class _HomepageState extends State<Homepage>
                   style: theme.textTheme.headline4,
                 ),
               ),
-              const NotFoundWrapper(
-                text: "No recent chats",
-                height: 200,
-              ),
+              const RecentChatsMini()
             ],
           ),
         ),

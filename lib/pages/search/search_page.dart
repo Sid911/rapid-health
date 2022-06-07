@@ -41,6 +41,7 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  String get docPref => widget.docPref?.getString() ?? "None";
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -71,20 +72,14 @@ class _SearchPageState extends State<SearchPage> {
                           color: theme.primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
-                          widget.docPref == null
-                              ? "None"
-                              : widget.docPref.toString(),
-                        ),
+                        child: Text(docPref),
                       ),
                     ],
                   ),
                 ),
                 FutureBuilder<List<PostData>>(
                   future: searchService.searchPosts(
-                    searchTerm,
-                    Coordinate(21, 83),
-                  ),
+                      searchTerm, Coordinate(21, 83), widget.docPref),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data!;

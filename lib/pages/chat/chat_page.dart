@@ -85,10 +85,8 @@ class _ChatPageState extends State<ChatPage> {
                   },
                   separatorBuilder: (ctx, index) {
                     return Divider(
-                      thickness: 2,
-                      color: darkMode
-                          ? Colors.blueGrey.shade300
-                          : Colors.blueGrey.shade700,
+                      thickness: 1,
+                      color: theme.scaffoldBackgroundColor,
                     );
                   },
                 );
