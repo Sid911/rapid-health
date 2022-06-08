@@ -27,9 +27,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currentUser = authService.currentUser!.userData;
+    final currentUser = authService.currentUser!;
+    final userData = currentUser.userData;
     String initials = "";
-    for (String s in currentUser.name.split(" ")) {
+    for (String s in userData.name.split(" ")) {
       initials += s[0];
     }
     return Drawer(
@@ -65,8 +66,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfilePage(
-                            userData: currentUser,
-                            isDoctor: authService.currentUser!.isUserDoctor,
+                            user: currentUser,
                           ),
                         ),
                       ),
@@ -83,10 +83,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text.rich(
                         TextSpan(
-                          text: currentUser.name,
+                          text: userData.name,
                           children: [
                             TextSpan(
-                              text: '\n${currentUser.email}',
+                              text: '\n${userData.email}',
                               style: const TextStyle(fontSize: 12),
                             )
                           ],
@@ -116,8 +116,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfilePage(
-                        userData: currentUser,
-                        isDoctor: authService.currentUser!.isUserDoctor,
+                        user: currentUser,
                       ),
                     ),
                   ),

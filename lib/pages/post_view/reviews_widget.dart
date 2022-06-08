@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:rapid_health/global/chips.dart';
-import 'package:rapid_health/global/post_preview.dart';
 import 'package:rapid_health/services/reviewStorageService/review_data.dart';
 import 'package:rapid_health/utility/user.dart';
 
@@ -34,41 +33,58 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
           final UserUID uid = UserUID.fromString(_list[index].authorUID);
-          return Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: theme.primaryColor,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    UserChip(name: uid.isDoctor ? "Doctor" : "User"),
-                    Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        child: CustomChip(child: Text(uid.id))),
-                  ],
-                ),
-                const Divider(),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
-                  child: Text(
-                    _list[index].title,
-                    style: theme.textTheme.bodyText1?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  _list[index].description,
-                  style: theme.textTheme.subtitle2,
-                ),
-              ],
-            ),
-          );
+          return ReviewTile(uid: uid, data: _list[index]);
         },
+      ),
+    );
+  }
+}
+
+class ReviewTile extends StatelessWidget {
+  const ReviewTile({
+    Key? key,
+    required this.uid,
+    required this.data,
+  }) : super(key: key);
+
+  final UserUID uid;
+  final ReviewData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: theme.primaryColor,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              UserChip(name: uid.isDoctor ? "Doctor" : "User"),
+              Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: CustomChip(child: Text(uid.id))),
+            ],
+          ),
+          const Divider(),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 15),
+            child: Text(
+              data.title,
+              style: theme.textTheme.bodyText1?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Text(
+            data.description,
+            style: theme.textTheme.subtitle2,
+          ),
+        ],
       ),
     );
   }

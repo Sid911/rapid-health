@@ -59,8 +59,8 @@ class Themes {
       textTheme: const TextTheme(
         headline2: TextStyle(
             color: Color(0xFF393E46),
-            fontFamily: "SketchBook",
-            fontWeight: FontWeight.normal,
+            fontFamily: "Lato",
+            fontWeight: FontWeight.bold,
             fontSize: 40),
         headline3: TextStyle(
           color: Color(0xFF6A7484),
@@ -132,8 +132,8 @@ class Themes {
     textTheme: const TextTheme(
       headline2: TextStyle(
         color: Color(0xFFE6E6E6),
-        fontFamily: "SketchBook",
-        fontWeight: FontWeight.normal,
+        fontFamily: "Lato",
+        fontWeight: FontWeight.bold,
         fontSize: 38,
       ),
       headline3: TextStyle(

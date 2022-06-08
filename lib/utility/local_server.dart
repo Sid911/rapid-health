@@ -94,7 +94,7 @@ class LocalServer {
     );
     final sidDoc = DoctorData(
       name: "Dr. Guest",
-      password: "0123456789",
+      password: "guest",
       email: "guestdoctor@dev.com",
       accountCreationDate: now,
       lastLoggedIn: now,
@@ -156,10 +156,10 @@ class LocalServer {
 
     const hash = "myRandomHash";
     if (!conversationBox.containsKey(hash)) {
-      addMessage(randomMessages[0], hash);
-      addMessage(randomMessages[1], hash);
-      addMessage(randomMessages[2], hash);
-      addMessage(randomMessages[3], hash);
+      await addMessage(randomMessages[0], hash);
+      await addMessage(randomMessages[1], hash);
+      await addMessage(randomMessages[2], hash);
+      await addMessage(randomMessages[3], hash);
     }
 
     if (!postsBox.containsKey("guestdoctor@dev.com")) {
