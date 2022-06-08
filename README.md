@@ -2,7 +2,7 @@
 
 A health based application made with flutter alone. The backend for the application is local *(this is the first time I have done something like this)* although the interfaces which the `widgets` and `bloc` can be extended to fit any type of backened needed
 
-![Rapid](https://user-images.githubusercontent.com/27860105/172438226-0e123646-f97e-4adf-851f-810919cf9188.png)
+![Rapid_new](https://user-images.githubusercontent.com/27860105/172538479-9326d1fa-0a39-4a4f-b681-10651aeb3e69.png)
 
 ## Getting Started
 - Download the application **APK** from [releases](https://github.com/Sid911/rapid-health/releases) Page.
